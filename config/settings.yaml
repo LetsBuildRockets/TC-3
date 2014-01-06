@@ -1,0 +1,10 @@
+# Debug mode
+debug: 0 # True/False
+
+# Burn Config
+burn:
+  time: 10 # seconds
+  
+# Server Settings
+server:
+  port: 80

@@ -12,9 +12,9 @@
   });
   socket.on('burn', function (data) {
 	console.log(data);
-	if(data == 'true')
+	if(data == 'initialized')
 		document.bgColor="red";
-	if(data == 'false')
+	if(data == 'stop')
 		document.bgColor="white";
   });
   

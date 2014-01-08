@@ -5,17 +5,15 @@ debug: 0 # True/False
 burn:
   sequence:
     command0: 
-      time: "-30"
+      time: -30
       run: init
-      params: ""
-    command1: 
-      time: "-10"
+    command1:
+      time: -10
       run: ignitor
       params: true
-    command1: 
-      time: "0"
-      run: ignitor
-      params: true
+    command2: 
+      time: 0
+      run: stop
   time: 30 # seconds
   
 # Server Settings

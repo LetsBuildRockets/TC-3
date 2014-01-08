@@ -4,7 +4,7 @@ var app = require('express')()
 , server = require('http').createServer(app)
 , io = require('socket.io').listen(server);
 var devices = require('./components/devices');
-var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'utf8'));
+var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
 
 server.listen(settings.server.port);
@@ -19,10 +19,10 @@ io.sockets.on('connection', function (socket) {
 	socket.on('burnState', function (data) {
 		if(data == 'initiate') {
 			devices.burn(settings);
-			if(settings.debug) console.log(devices.getBurnState);
+			if(settings.debug) console.log(devices.getBurnState());
 		} else if (data == 'stop') {
 			devices.stop(settings);
-			if(settings.debug) console.log(devices.getBurnState);
+			if(settings.debug) console.log(devices.getBurnState());
 		}
 	});
 

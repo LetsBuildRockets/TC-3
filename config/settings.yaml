@@ -3,7 +3,20 @@ debug: 0 # True/False
 
 # Burn Config
 burn:
-  time: 10 # seconds
+  sequence:
+    command0: 
+      time: "-30"
+      run: init
+      params: ""
+    command1: 
+      time: "-10"
+      run: ignitor
+      params: true
+    command1: 
+      time: "0"
+      run: ignitor
+      params: true
+  time: 30 # seconds
   
 # Server Settings
 server:

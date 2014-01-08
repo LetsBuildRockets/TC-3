@@ -34,6 +34,6 @@ io.sockets.on('connection', function (socket) {
 			socket.emit('burn', data);
 			lastSent = data;
 		}
-	}, 500);
+	}, 10);
 
 });

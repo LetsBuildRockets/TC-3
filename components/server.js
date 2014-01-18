@@ -4,7 +4,7 @@ var express = require('express');
 var app = express()
 , server = require('http').createServer(app)
 , io = require('socket.io').listen(server);
-var devices = require('./devices');
+var sequencer = require('./sequencer');
 var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
 
@@ -29,11 +29,11 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('controlState', function (data) {
 		if(data == 'initiate') {
-			devices.startSequence(settings);
-			if(settings.debug) console.log(devices.getsequenceState());
+			sequencer.startSequence(settings);
+			if(settings.debug) console.log(sequencer.getsequenceState());
 		} else if (data == 'stop') {
-			devices.stopSequence(settings);
-			if(settings.debug) console.log(devices.getsequenceState());
+			sequencer.stopSequence(settings);
+			if(settings.debug) console.log(sequencer.getsequenceState());
 		}
 	});
 

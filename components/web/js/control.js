@@ -20,6 +20,7 @@ function run() {
 }
 function stop() {
     socket.emit('controlState', 'stop');
+	document.getElementById('time').value = "";
 }
 
 function clearStatus() {

@@ -14,7 +14,8 @@
   "dependencies": {
     "socket.io": "*",
     "express": "*",
-    "js-yaml": "*"
+    "js-yaml": "*",
+    "serialport": "*"
   },
   "engines": {
     "node": ">= 0.6"

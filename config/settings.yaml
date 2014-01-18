@@ -15,7 +15,6 @@ sequence:
     time: 0
     run: end
     params: ''
-  starttime: -30 # seconds
   
 # Server Settings
 server:

@@ -13,9 +13,18 @@ sequence:
     params: true
   command2: 
     time: 0
+    run: ignitor
+    params: false
+  command3: 
+    time: 30
     run: end
     params: ''
   
 # Server Settings
 server:
   port: 80
+  
+# I/O
+serial:
+  port: COM3
+  baudrate: 9600

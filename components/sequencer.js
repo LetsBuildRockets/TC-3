@@ -1,5 +1,4 @@
-var server = require('./server');
-
+var sendUpdate;
 var sequenceState = "";
 var sequenceRunning = false;
 var sequence = { };
@@ -7,8 +6,9 @@ var sequenceInitTime;
 
 var lastTimeSent = "";
 
-exports.startSequence = function startSequence(settings) {
+exports.startSequence = function startSequence(send, settings) {
 	if(!sequenceRunning){
+		sendUpdate = send;
 		sequenceRunning = true;
 		countdown = settings.sequence.command0.time;
 
@@ -26,9 +26,10 @@ exports.startSequence = function startSequence(settings) {
 	}
 };
 
-exports.stopSequence = function startSequence(settings) {
+exports.stopSequence = function stopSequence(send, settings) {
+	sendUpdate = send;
 	sequence.end(settings);
-	server.sendUpdate('sequenceState', sequenceState);
+	sendUpdate('sequenceState', sequenceState);
 };
 
 function que(index, commands, settings) {
@@ -36,7 +37,7 @@ function que(index, commands, settings) {
 		if(sequenceRunning){
 			if(settings.debug) console.log(index);
 			sequence[commands[index].run](settings, commands[index].params);
-			server.sendUpdate('sequenceState', sequenceState);
+			sendUpdate('sequenceState', sequenceState);
 		}
 	}, (commands[index].time-countdown)*1000);
 }
@@ -56,7 +57,7 @@ sequence.end = function sequenceEnd(settings, params){
 	sequenceState = "stop";
 };
 
-exports.getsequenceState = function(){
+exports.getsequenceState = function getsSquenceState(){
 	return sequenceState;
 };
 
@@ -66,7 +67,7 @@ setInterval(function() {
 		var T = countdown+(hrTime[0] + hrTime[1] / 1000000000)-sequenceInitTime;
 		T = Math.round(T);
 		if(T != lastTimeSent)
-			server.sendUpdate('time', T.toString());
+			sendUpdate('time', T.toString());
 		lastTimeSent = T;
 	}
-}, 50);
+}, 500);

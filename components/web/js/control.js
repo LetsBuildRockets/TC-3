@@ -21,8 +21,8 @@ window.onload = function(){
 	if(document.getElementById('g1'))
 		gauge[1] = new JustGage({
 			id: "g1", 
-			min: -30,
-			max: 30,
+			min: 0,
+			max: 50,
 			title: "s0",
 			label: "units",  
 			showMinMax: false,
@@ -39,8 +39,8 @@ window.onload = function(){
 	if(document.getElementById('g2'))
 		gauge[2] = new JustGage({
 			id: "g2", 
-			min: -30,
-			max: 30,
+			min: 0,
+			max: 50,
 			title: "s1",
 			label: "units",  
 			showMinMax: false,
@@ -56,8 +56,8 @@ window.onload = function(){
 	if(document.getElementById('g3'))
 		gauge[3] = new JustGage({
 			id: "g3", 
-			min: -30,
-			max: 30,
+			min: 0,
+			max: 50,
 			title: "s2",
 			label: "units",  
 			showMinMax: false,
@@ -73,8 +73,8 @@ window.onload = function(){
 	if(document.getElementById('g4'))
 		gauge[4] = new JustGage({
 			id: "g4", 
-			min: -30,
-			max: 30,
+			min: 0,
+			max: 50,
 			title: "s3",
 			label: "units",  
 			showMinMax: false,
@@ -90,8 +90,110 @@ window.onload = function(){
 	if(document.getElementById('g5'))
 		gauge[5] = new JustGage({
 			id: "g5", 
-			min: -30,
-			max: 30,
+			min: 0,
+			max: 50,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+	if(document.getElementById('g6'))
+		gauge[6] = new JustGage({
+			id: "g6", 
+			min: 0,
+			max: 50,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+	if(document.getElementById('g7'))
+		gauge[7] = new JustGage({
+			id: "g7", 
+			min: 0,
+			max: 50,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+	if(document.getElementById('g8'))
+		gauge[8] = new JustGage({
+			id: "g8", 
+			min: 0,
+			max: 50,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+	if(document.getElementById('g9'))
+		gauge[9] = new JustGage({
+			id: "g9", 
+			min: 0,
+			max: 50,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+	if(document.getElementById('g10'))
+		gauge[10] = new JustGage({
+			id: "g10", 
+			min: 0,
+			max: 50,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+	if(document.getElementById('g11'))
+		gauge[11] = new JustGage({
+			id: "g11", 
+			min: 0,
+			max: 50,
 			title: "s4",
 			label: "units",  
 			showMinMax: false,

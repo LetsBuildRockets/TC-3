@@ -6,10 +6,17 @@ var app = express()
 , io = require('socket.io').listen(server);
 
 var sequencer = require('./sequencer');
+var devices = require('./devices');
 var updateData = require('./updateData');
 var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
-server.listen(settings.server.port);
+exports.init = function init(){
+	server.listen(settings.server.port);
+
+	updateData.init(sendUpdate, devices, settings);
+	devices.init();
+};
+
 
 app.use(express.static('./components/web/'));
 
@@ -28,7 +35,6 @@ app.get('/estop', function (req, res) {
 io.sockets.on('connection', function (socket) {
 	socket.emit('serverStatus', 'connected');
 	
-	updateData.init(sendUpdate, settings);
 
 	socket.on('controlState', function (data) {
 		if(data == 'initiate') {

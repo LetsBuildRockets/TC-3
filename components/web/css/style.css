@@ -19,7 +19,7 @@
 	font: 50px "Open Sans", Arial, Helvetica, Geneva, sans-serif;
 }
 
-#g1, #g2, #g3, #g4, #g5, #g6 {
+#g0, #g1, #g2, #g3, #g4, #g5 {
 	width:235px; height:200px;
 	display: inline-block;
 }

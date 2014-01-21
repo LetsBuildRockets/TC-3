@@ -45,7 +45,7 @@ function que(index, commands, settings) {
 sequence.init = function sequenceInit(settings, params){
 	var hrTime = process.hrtime();
 	sequenceInitTime = (hrTime[0] + hrTime[1] / 1000000000);
-	sequenceState = "initialized";
+	sequenceState = "sequencer initialized";
 };
 
 sequence.ignitor = function sequenceIgnitor(settings, state){
@@ -63,11 +63,15 @@ exports.getsequenceState = function getsSquenceState(){
 
 setInterval(function() {
 	if(sequenceRunning){
-		var hrTime = process.hrtime();
-		var T = countdown+(hrTime[0] + hrTime[1] / 1000000000)-sequenceInitTime;
-		T = Math.round(T);
-		if(T != lastTimeSent)
-			sendUpdate('time', T.toString());
-		lastTimeSent = T;
+		updateTime();
 	}
 }, 500);
+
+function updateTime(){
+	var hrTime = process.hrtime();
+	var T = countdown+(hrTime[0] + hrTime[1] / 1000000000)-sequenceInitTime;
+	T = Math.round(T);
+	if(T != lastTimeSent)
+		sendUpdate('time', T.toString());
+	lastTimeSent = T;
+}

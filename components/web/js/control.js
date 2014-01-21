@@ -1,12 +1,30 @@
-var g1, g2, g3, g4, g5, g6;
+var gauge = new Array();
 window.onload = function(){
+	if(document.getElementById('g0'))
+		gauge[0] = new JustGage({
+			id: "g0", 
+			min: -30,
+			max: 30,
+			title: "Time",
+			label: "seconds",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
+		  });
+		
 	if(document.getElementById('g1'))
-		g1 = new JustGage({
+		gauge[1] = new JustGage({
 			id: "g1", 
 			min: -30,
 			max: 30,
-			title: "Time",
-			label: "seconds",  
+			title: "s0",
+			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
 			levelColors: ["#000"],
@@ -15,16 +33,16 @@ window.onload = function(){
 			startAnimationType: "linear",
 			refreshAnimationTime: 1,
 			refreshAnimationType: "linear",
-			//gaugeWidthScale: 0.2            
+			gaugeWidthScale: 0.5     
 		  });
 		
 	if(document.getElementById('g2'))
-		g2 = new JustGage({
+		gauge[2] = new JustGage({
 			id: "g2", 
 			min: -30,
 			max: 30,
-			title: "Time",
-			label: "seconds",  
+			title: "s1",
+			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
 			levelColors: ["#000"],
@@ -33,16 +51,15 @@ window.onload = function(){
 			startAnimationType: "linear",
 			refreshAnimationTime: 1,
 			refreshAnimationType: "linear",
-			//gaugeWidthScale: 0.2            
+			gaugeWidthScale: 0.5   
 		  });
-		
 	if(document.getElementById('g3'))
-		g3 = new JustGage({
+		gauge[3] = new JustGage({
 			id: "g3", 
 			min: -30,
 			max: 30,
-			title: "Time",
-			label: "seconds",  
+			title: "s2",
+			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
 			levelColors: ["#000"],
@@ -51,15 +68,15 @@ window.onload = function(){
 			startAnimationType: "linear",
 			refreshAnimationTime: 1,
 			refreshAnimationType: "linear",
-			//gaugeWidthScale: 0.2            
+			gaugeWidthScale: 0.5      
 		  });
 	if(document.getElementById('g4'))
-		g4 = new JustGage({
+		gauge[4] = new JustGage({
 			id: "g4", 
 			min: -30,
 			max: 30,
-			title: "Time",
-			label: "seconds",  
+			title: "s3",
+			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
 			levelColors: ["#000"],
@@ -68,7 +85,24 @@ window.onload = function(){
 			startAnimationType: "linear",
 			refreshAnimationTime: 1,
 			refreshAnimationType: "linear",
-			//gaugeWidthScale: 0.2            
+			gaugeWidthScale: 0.5      
+		  });
+	if(document.getElementById('g5'))
+		gauge[5] = new JustGage({
+			id: "g5", 
+			min: -30,
+			max: 30,
+			title: "s4",
+			label: "units",  
+			showMinMax: false,
+			gaugeColor: "#fff",
+			levelColors: ["#000"],
+			showInnerShadow: false,        
+			startAnimationTime: 1,
+			startAnimationType: "linear",
+			refreshAnimationTime: 1,
+			refreshAnimationType: "linear",
+			gaugeWidthScale: 0.5
 		  });
 	
 };
@@ -87,23 +121,18 @@ socket.on('sequenceState', function (data) {
 	displayStatus(data);
 });
 socket.on('time', function (data) {
-	if(g1)
-		g1.refresh(parseFloat(data));
-	if(g2)
-		g2.refresh(parseFloat(data));
-	if(g3)
-		g3.refresh(parseFloat(data));
-	if(g4)
-		g4.refresh(parseFloat(data));
-	if(g5)
-		g5.refresh(parseFloat(data));
-	if(g6)
-		g6.refresh(parseFloat(data));
-		
+	if(gauge[0])
+		gauge[0].refresh(parseFloat(data));
 	if(data >= 0) {
-		data = "+"+data;
+		data = "+" + data;
 	}
 	document.getElementById('time').value = ('T'+data);
+});
+socket.on('sensor', function(data) {
+	var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
+	data = parseFloat(data.substring(data.indexOf(':') + 1, data.length));
+	if(gauge[id])
+		gauge[id].refresh(data);
 });
 
 function run() {

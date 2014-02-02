@@ -19,6 +19,11 @@
 	font: 50px "Open Sans", Arial, Helvetica, Geneva, sans-serif;
 }
 
+#lightsCanvas {
+	width: 100%;
+	height: 50px;
+}
+
 *[id*='g'] {
 	width:235px; height:200px;
 	display: inline-block;

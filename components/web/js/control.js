@@ -1,4 +1,7 @@
 var gauge = new Array();
+var c;
+var context;
+
 window.onload = function(){
 	if(document.getElementById('g0'))
 		gauge[0] = new JustGage({
@@ -206,6 +209,21 @@ window.onload = function(){
 			refreshAnimationType: "linear",
 			gaugeWidthScale: 0.5
 		  });
+		
+	c = document.getElementById("lightsCanvas");
+	context = c.getContext("2d");
+    var centerY = c.height / 2;
+	
+	context.fillStyle="#FF0000";
+	context.fillRect(0,0,50,50);
+	
+	context.beginPath();
+	context.arc(50, centerY, 10, 0, 2 * Math.PI, false);
+	context.fillStyle = 'green';
+	context.fill();
+	context.lineWidth = 5;
+	context.strokeStyle = '#003300';
+	context.stroke();
 	
 };
 

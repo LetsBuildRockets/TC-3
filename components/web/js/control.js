@@ -1,6 +1,5 @@
 var gauge = new Array();
 var c;
-var context;
 
 window.onload = function(){
 	if(document.getElementById('g0'))
@@ -26,7 +25,7 @@ window.onload = function(){
 			id: "g1", 
 			min: 0,
 			max: 50,
-			title: "s0",
+			title: "s1",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -44,7 +43,7 @@ window.onload = function(){
 			id: "g2", 
 			min: 0,
 			max: 50,
-			title: "s1",
+			title: "s2",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -61,7 +60,7 @@ window.onload = function(){
 			id: "g3", 
 			min: 0,
 			max: 50,
-			title: "s2",
+			title: "s3",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -78,7 +77,7 @@ window.onload = function(){
 			id: "g4", 
 			min: 0,
 			max: 50,
-			title: "s3",
+			title: "s4",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -95,7 +94,7 @@ window.onload = function(){
 			id: "g5", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s5",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -112,7 +111,7 @@ window.onload = function(){
 			id: "g6", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s6",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -129,7 +128,7 @@ window.onload = function(){
 			id: "g7", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s7",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -146,7 +145,7 @@ window.onload = function(){
 			id: "g8", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s8",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -163,7 +162,7 @@ window.onload = function(){
 			id: "g9", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s9",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -180,7 +179,7 @@ window.onload = function(){
 			id: "g10", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s10",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -197,7 +196,7 @@ window.onload = function(){
 			id: "g11", 
 			min: 0,
 			max: 50,
-			title: "s4",
+			title: "s11",
 			label: "units",  
 			showMinMax: false,
 			gaugeColor: "#fff",
@@ -211,20 +210,7 @@ window.onload = function(){
 		  });
 		
 	c = document.getElementById("lightsCanvas");
-	context = c.getContext("2d");
-    var centerY = c.height / 2;
-	
-	context.fillStyle="#FF0000";
-	context.fillRect(0,0,50,50);
-	
-	context.beginPath();
-	context.arc(50, centerY, 10, 0, 2 * Math.PI, false);
-	context.fillStyle = 'green';
-	context.fill();
-	context.lineWidth = 5;
-	context.strokeStyle = '#003300';
-	context.stroke();
-	
+	updateLights(new Array(0,0,1,0,0,1,0,0));
 };
 
 var socket = io.connect('http://192.168.1.109');
@@ -270,4 +256,24 @@ function clearStatus() {
 function displayStatus(data){
 	document.getElementById('status').value = document.getElementById('status').value + data + '\n';
 	document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight;
+}
+
+function updateLights(lights){
+	c.setAttribute('width', window.innerWidth);
+	c.setAttribute('height', 80);
+	var context = c.getContext("2d");
+    var centerY = c.height / 2;
+	numberOfLights = 8;
+	for(i=0; i<numberOfLights; i++){
+		context.beginPath();
+		context.arc((i+1) * c.width/(numberOfLights+1), centerY, 25, 0, 2 * Math.PI, false);
+		if(lights[i])
+			context.fillStyle = '#32cd32';
+		else			
+			context.fillStyle = 'gray';
+		context.fill();
+		context.lineWidth = 5;
+		context.strokeStyle = 'black';//'#003300';
+		context.stroke();
+	}
 }

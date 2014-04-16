@@ -213,7 +213,7 @@ window.onload = function(){
 	updateLights(new Array(0,0,1,0,0,1,0,0));
 };
 
-var socket = io.connect('http://192.168.1.109');
+var socket = io.connect(location.host);
 socket.on('serverStatus', function (data) {
 	console.log(data);
 	displayStatus(data);

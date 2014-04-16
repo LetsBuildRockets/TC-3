@@ -34,7 +34,7 @@ app.get('/estop', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
 	socket.emit('serverStatus', 'connected');
-	
+
 
 	socket.on('controlState', function (data) {
 		if(data == 'initiate') {

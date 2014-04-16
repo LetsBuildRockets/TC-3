@@ -24,12 +24,17 @@ serialPort.open(function () {
 		console.log('data received: ' + data);
 	});
 
-	var last = 0;
+	// Serial output test
+	/*var last = 0;
 	setInterval(function() {
 		if (last)
 			serialPort.write("0:0\n");
 		else
 			serialPort.write("0:1\n");
 		last = !last;
-	}, 500);
+	}, 500);*/
 });
+
+exports.write = function (address, state) {
+	serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
+};

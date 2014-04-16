@@ -1,9 +1,9 @@
+var serial = require('./serial');
 var sendUpdate;
 var sequenceState = "";
 var sequenceRunning = false;
 var sequence = { };
 var sequenceInitTime;
-
 var lastTimeSent = "";
 
 exports.startSequence = function startSequence(send, settings) {
@@ -50,6 +50,7 @@ sequence.init = function sequenceInit(settings, params){
 
 sequence.ignitor = function sequenceIgnitor(settings, state){
 	sequenceState = "ignitor " + state;
+	serial.write(1, state);
 };
 
 sequence.end = function sequenceEnd(settings, params){

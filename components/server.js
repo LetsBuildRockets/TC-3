@@ -7,14 +7,15 @@ var app = express()
 
 var sequencer = require('./sequencer');
 var devices = require('./devices');
-var updateData = require('./updateData');
+var actions = require('./actions');
 var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
 exports.init = function init(){
 	server.listen(settings.server.port);
 
-	updateData.init(sendUpdate, devices, settings);
-	devices.init();
+	devices.init(sendUpdate, settings);
+	actions.init(sendUpdate, settings);
+	sequencer.init(actions, settings);
 };
 
 

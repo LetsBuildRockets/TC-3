@@ -1,4 +1,4 @@
-var actions = require('./actions');
+var actions;
 var sendUpdate;
 var sequenceState = "";
 var sequenceRunning = false;
@@ -6,9 +6,10 @@ var sequence = { };
 var sequenceInitTime;
 var lastTimeSent = "";
 
-exports.startSequence = function startSequence(send, settings) {
+exports.startSequence = function startSequence(newSend, newActions, settings) {
 	if(!sequenceRunning){
-		sendUpdate = send;
+		sendUpdate = newSend;
+		actions = newActions;
 		sequenceRunning = true;
 		countdown = settings.sequence.command0.time;
 
@@ -26,8 +27,9 @@ exports.startSequence = function startSequence(send, settings) {
 	}
 };
 
-exports.stopSequence = function stopSequence(send, settings) {
+exports.stopSequence = function stopSequence(newSend, newActions, settings) {
 	sendUpdate = send;
+	actions = newActions;
 	sequence.end(settings);
 	sendUpdate('sequenceState', sequenceState);
 };

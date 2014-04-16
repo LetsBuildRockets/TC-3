@@ -1,4 +1,5 @@
 var gauge = new Array();
+var lights = new Array(0,0,0,0,0,0,0,0);
 var c;
 
 window.onload = function(){
@@ -210,7 +211,7 @@ window.onload = function(){
 		  });
 		
 	c = document.getElementById("lightsCanvas");
-	updateLights(new Array(0,0,1,0,0,1,0,0));
+	updateLights(lights);
 };
 
 var socket = io.connect(location.host);
@@ -239,6 +240,12 @@ socket.on('sensor', function(data) {
 	data = parseFloat(data.substring(data.indexOf(':') + 1, data.length));
 	if(gauge[id])
 		gauge[id].refresh(data);
+});
+socket.on('action', function(data) {
+	var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
+	data = parseFloat(data.substring(data.indexOf(':') + 1, data.length));
+	lights[id] = data;
+	updateLights(lights);	
 });
 
 function run() {

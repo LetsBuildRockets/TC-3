@@ -43,6 +43,7 @@ function que(index, commands, settings) {
 }
 
 sequence.init = function sequenceInit(settings, params){
+	actions.init(settings);
 	var hrTime = process.hrtime();
 	sequenceInitTime = (hrTime[0] + hrTime[1] / 1000000000);
 	sequenceState = "sequencer initialized";

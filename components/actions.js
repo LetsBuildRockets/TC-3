@@ -1,5 +1,9 @@
 var serial = require('./serial');
-var settings = yaml.safeLoad(fs.readFileSync('../config/settings.yaml', 'ascii'));
+var settings;
+
+exports.init = function(newSettings){
+	settings = newSettings;
+};
 
 exports.ignitor = function ignitor(state){
 	serial.write(settings.outputs.ignitor, state);

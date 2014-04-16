@@ -1,6 +1,7 @@
 var yaml = require('js-yaml');
 var fs = require('fs');
 var serialPort = require("serialport");
+var SerialPort = serialPort.SerialPort;
 var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
 //list ports for rpi
@@ -13,7 +14,7 @@ serialPort.list(function (err, ports) {
 });
 
 
-var serialPort = new serialPort.SerialPort(settings.serial.port, {
+var serialPort = new SerialPort(settings.serial.port, {
 	baudrate: settings.serial.baudrate
 }, false);
 

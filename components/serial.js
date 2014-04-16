@@ -27,8 +27,8 @@ serialPort.open(function () {
 	var last = 0;
 	setTimeout(function(){
 		if (last)
-			serialPort.write("0:0");
+			serialPort.write("0:0\n");
 		else
-			serialPort.write("0:1");
+			serialPort.write("0:1\n");
 	},1000);
 });

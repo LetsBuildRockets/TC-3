@@ -6,10 +6,13 @@ var sequence = { };
 var sequenceInitTime;
 var lastTimeSent = "";
 
-exports.startSequence = function startSequence(newSend, newActions, settings) {
+exports.init = function init(newActions, newSendUpdate, newSettings){
+	actions = newActions;
+	sendUpdate = newSendUpdate;
+};
+
+exports.startSequence = function startSequence(settings) {
 	if(!sequenceRunning){
-		sendUpdate = newSend;
-		actions = newActions;
 		sequenceRunning = true;
 		countdown = settings.sequence.command0.time;
 
@@ -27,9 +30,7 @@ exports.startSequence = function startSequence(newSend, newActions, settings) {
 	}
 };
 
-exports.stopSequence = function stopSequence(newSend, newActions, settings) {
-	sendUpdate = send;
-	actions = newActions;
+exports.stopSequence = function stopSequence(settings) {
 	sequence.end(settings);
 	sendUpdate('sequenceState', sequenceState);
 };

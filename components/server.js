@@ -15,7 +15,7 @@ exports.init = function init(){
 
 	devices.init(sendUpdate, settings);
 	actions.init(sendUpdate, settings);
-	sequencer.init(actions, settings);
+	sequencer.init(actions, sendUpdate, settings);
 };
 
 
@@ -39,10 +39,10 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('controlState', function (data) {
 		if(data == 'initiate') {
-			sequencer.startSequence(sendUpdate, settings);
+			sequencer.startSequence(settings);
 			if(settings.debug) console.log(sequencer.getsequenceState());
 		} else if (data == 'stop') {
-			sequencer.stopSequence(sendUpdate, settings);
+			sequencer.stopSequence(settings);
 			if(settings.debug) console.log(sequencer.getsequenceState());
 		}
 	});

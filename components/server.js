@@ -15,7 +15,7 @@ exports.init = function init(){
 
 	devices.init(settings);
 	actions.init(settings);
-	sequencer.init(actions, sendUpdate, settings);
+	sequencer.init(actions, settings);
 };
 
 
@@ -52,8 +52,10 @@ io.sockets.on('connection', function (socket) {
 	}, 500);
 });
 
-String lastSensorsUpdate = "";
-String lastActionsUpdate = "";
+var lastSensorsUpdate = "";
+var lastActionsUpdate = "";
+var lastTimeUpdate = "";
+var lastSequenceUpdate = "";
 function update() {
 	var sensorsUpdate = "";
 	for(var s = 0; s < devices.sensors.length; s++){
@@ -70,6 +72,17 @@ function update() {
 	if(actionsUpdate != lastActionsUpdate)
 		sendUpdate('action', actionsUpdate);
 	lastActionsUpdate = actionsUpdate;
+
+	var timeUpdate = sequencer.time();
+	if(timeUpdate != lastTimeUpdate)
+		sendUpdate('time', timeUpdate);
+	lastTimeUpdate = timeUpdate;
+
+
+	var sequenceUpdate = sequencer.sequenceState();
+	if(sequenceUpdate != lastSequenceUpdate)
+		sendUpdate('sequenceState', sequenceUpdate);
+	lastSequenceUpdate = sequenceUpdate;
 };
 
 function sendUpdate(name, data) {

@@ -1,14 +1,13 @@
 var actions;
-var sendUpdate;
 var sequenceState = "";
 var sequenceRunning = false;
 var sequence = { };
 var sequenceInitTime;
 var lastTimeSent = "";
+var countdown;
 
-exports.init = function init(newActions, newSendUpdate, newSettings){
+exports.init = function init(newActions, newSettings){
 	actions = newActions;
-	sendUpdate = newSendUpdate;
 };
 
 exports.startSequence = function startSequence(settings) {
@@ -32,7 +31,6 @@ exports.startSequence = function startSequence(settings) {
 
 exports.stopSequence = function stopSequence(settings) {
 	sequence.end(settings);
-	sendUpdate('sequenceState', sequenceState);
 };
 
 function que(index, commands, settings) {
@@ -40,7 +38,6 @@ function que(index, commands, settings) {
 		if(sequenceRunning){
 			if(settings.debug) console.log(index);
 			sequence[commands[index].run](settings, commands[index].params);
-			sendUpdate('sequenceState', sequenceState);
 		}
 	}, (commands[index].time-countdown)*1000);
 }
@@ -72,21 +69,15 @@ sequence.end = function sequenceEnd(settings, params){
 	actions.end();
 };
 
-exports.getsequenceState = function getsSquenceState(){
+exports.sequenceState = function getsSquenceState(){
 	return sequenceState;
 };
 
-setInterval(function() {
-	if(sequenceRunning){
-		updateTime();
-	}
-}, 500);
-
-function updateTime(){
-	var hrTime = process.hrtime();
-	var T = countdown+(hrTime[0] + hrTime[1] / 1000000000)-sequenceInitTime;
-	T = Math.round(T);
-	if(T != lastTimeSent)
-		sendUpdate('time', T.toString());
-	lastTimeSent = T;
-}
+exports.time = function updateTime(){
+	if(sequenceRunning) {
+		var hrTime = process.hrtime();
+		var T = countdown+(hrTime[0] + hrTime[1] / 1000000000)-sequenceInitTime;
+		return Math.round(T);
+	} else
+		return null;
+};

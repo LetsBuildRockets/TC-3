@@ -9,7 +9,7 @@ exports.init = function(newSendUpdate, newSettings){
 	setInterval(function() {
 		update();
 	}, 500);
-	for(var i = 0; i < outputs.length(); i++)
+	for(var i = 0; i < outputs.length; i++)
 		outputs[i] = 0;
 };
 

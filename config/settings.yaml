@@ -8,17 +8,31 @@ sequence:
     run: init
     params: ''
   command1:
-    time: -10
+    time: -1
     run: ignitor
     params: true
   command2: 
-    time: 0
+    time: -0.1
     run: ignitor
     params: false
   command3: 
-    time: 30
+    time: 0
+    run: fuelValve
+    params: true
+  command4: 
+    time: 0.5
+    run: OxValve
+    params: true
+  command5: 
+    time: 10
     run: end
     params: ''
+  
+# Outputs
+outputs:
+  ingitor: 0
+  fuelVavle: 1
+  oxyVavle: 2
   
 # Server Settings
 server:
@@ -28,3 +42,4 @@ server:
 serial:
   port: /dev/ttyAMA0 
   baudrate: 9600
+  

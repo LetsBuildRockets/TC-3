@@ -1,4 +1,4 @@
-var serial = require('./serial');
+var actions = require('./actions');
 var sendUpdate;
 var sequenceState = "";
 var sequenceRunning = false;
@@ -50,12 +50,23 @@ sequence.init = function sequenceInit(settings, params){
 
 sequence.ignitor = function sequenceIgnitor(settings, state){
 	sequenceState = "ignitor " + state;
-	serial.write(1, state);
+	actions.ignitor(state);
+};
+
+sequence.fuelValve = function sequencefuelValve(settings, state){
+	sequenceState = "fuelValve " + state;
+	actions.fuelValve(state);
+};
+
+sequence.oxyVavle = function sequenceOxyValve(settings, state){
+	sequenceState = "oxyValve " + state;
+	actions.oxyValve(state);
 };
 
 sequence.end = function sequenceEnd(settings, params){
 	sequenceRunning = false;
 	sequenceState = "stop";
+	actions.end();
 };
 
 exports.getsequenceState = function getsSquenceState(){

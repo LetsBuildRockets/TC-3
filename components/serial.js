@@ -20,15 +20,16 @@ var serialPort = new SerialPort(settings.serial.port, {
 
 serialPort.open(function () {
 	console.log('open');
-	/*serialPort.on('data', function(data) {
+	serialPort.on('data', function(data) {
 		console.log('data received: ' + data);
-	});*/
+	});
 
 	var last = 0;
-	setTimeout(function() {
+	setInterval(function() {
 		if (last)
 			serialPort.write("0:0\n");
 		else
 			serialPort.write("0:1\n");
+		last = !last;
 	}, 500);
 });

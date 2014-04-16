@@ -26,5 +26,5 @@ server:
   
 # I/O
 serial:
-  port: /dev/ttyAMA0 #COM3
+  port: COM3 #/dev/ttyAMA0 
   baudrate: 9600

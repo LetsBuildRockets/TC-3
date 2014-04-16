@@ -13,7 +13,7 @@ serialPort.list(function (err, ports) {
 });
 
 
-var serialPort = new SerialPort(settings.serial.port, {
+var serialPort = new serialPort.SerialPort(settings.serial.port, {
 	baudrate: settings.serial.baudrate
 }, false);
 
@@ -22,12 +22,12 @@ serialPort.open(function () {
 	serialPort.on('data', function(data) {
 		console.log('data received: ' + data);
 	});
+	
+	var last = 0;
+	setTimeout(function(){
+		if (last)
+			serialPort.write("0:0");
+		else
+			serialPort.write("0:1");
+	},1000);
 });
-
-var last = 0;
-setTimeout(function(){
-	if (last)
-		serialPort.write("0:0");
-	else
-		serialPort.write("0:1");
-},1000);

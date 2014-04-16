@@ -8,11 +8,11 @@ sequence:
     run: init
     params: ''
   command1:
-    time: -2
+    time: -1
     run: ignitor
     params: true
   command2: 
-    time: -0.1
+    time: 0
     run: ignitor
     params: false
   command3: 
@@ -30,10 +30,10 @@ sequence:
   
 # Outputs
 outputs:
-  ingitor: 0
+  ignitor: 0
   fuelValve: 1
   oxyValve: 2
-  
+
 # Server Settings
 server:
   port: 80

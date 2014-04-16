@@ -9,7 +9,6 @@ var lastTimeSent = "";
 exports.init = function init(newActions, newSendUpdate, newSettings){
 	actions = newActions;
 	sendUpdate = newSendUpdate;
-	actions.init(newSendUpdate, newSettings);
 };
 
 exports.startSequence = function startSequence(settings) {

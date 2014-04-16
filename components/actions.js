@@ -1,17 +1,11 @@
 var serial = require('./serial');
 var settings;
 var outputs = new Array(4);
-var sendUpdate;
 
-exports.init = function(newSendUpdate, newSettings){
+exports.init = function(newSettings){
 	settings = newSettings;
-	sendUpdate = newSendUpdate;
 	for(var i = 0; i < outputs.length; i++)
 		outputs[i] = 0;
-	
-	setInterval(function() {
-		update();
-	}, 500);
 };
 
 exports.ignitor = function ignitor(state){
@@ -38,8 +32,4 @@ exports.end = function(){
 	exports.oxyValve(false);
 };
 
-function update(){
-	for(var a = 0; a < outputs.length; a++){
-		sendUpdate('action', a + ":" + (outputs[a] ? 1 : 0));
-	}
-}
+exports.outputs = outputs;

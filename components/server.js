@@ -13,8 +13,8 @@ var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'))
 exports.init = function init(){
 	server.listen(settings.server.port);
 
-	devices.init(sendUpdate, settings);
-	actions.init(sendUpdate, settings);
+	devices.init(settings);
+	actions.init(settings);
 	sequencer.init(actions, sendUpdate, settings);
 };
 
@@ -46,9 +46,26 @@ io.sockets.on('connection', function (socket) {
 			if(settings.debug) console.log(sequencer.getsequenceState());
 		}
 	});
-
+	
+	setInterval(function() {
+		update();
+	}, 500);
 });
 
-function sendUpdate(name, data){
+function update() {
+	var sensorsUpdate = "";
+	for(var s = 0; s < devices.sensors.length; s++){
+		sensorsUpdate += s + ":" + devices.sensors[s] + "\n";
+	}
+	//sendUpdate('sensor', sensorsUpdate);
+	
+	var actionsUpdate = "";
+	for(var a = 0; a < actions.outputs.length; a++){
+		actionsUpdate += a + ":" + (actions.outputs[a] ? 1 : 0) + "\n";
+	}
+	sendUpdate('action', actionsUpdate);
+};
+
+function sendUpdate(name, data) {
 	io.sockets.emit(name, data);
 };

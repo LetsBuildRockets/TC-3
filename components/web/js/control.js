@@ -234,16 +234,23 @@ socket.on('time', function (data) {
 	document.getElementById('time').value = ('T'+data);
 });
 socket.on('sensor', function(data) {
-	var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
-	data = parseFloat(data.substring(data.indexOf(':') + 1, data.length));
-	if(gauge[id])
-		gauge[id].refresh(data);
+	while(data.length > 1){
+		var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
+		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));
+		data = data.substring(data.indexOf('\n') + 1, data.length);
+		if(gauge[id])
+			gauge[id].refresh(state);
+	}
 });
 socket.on('action', function(data) {
-	var id = parseInt(data.substring(0, data.indexOf(':')));
-	data = parseFloat(data.substring(data.indexOf(':') + 1, data.length));
-	lights[id] = (data ? 1 : 0);
-	updateLights(lights);	
+	console.log("UPDATE");
+	while(data.length > 1){
+		var id = parseInt(data.substring(0, data.indexOf(':')));
+		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));
+		data = data.substring(data.indexOf('\n') + 1, data.length);
+		lights[id] = (state ? 1 : 0);
+		updateLights(lights);
+	}
 });
 
 function run() {

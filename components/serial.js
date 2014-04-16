@@ -37,4 +37,14 @@ serialPort.open(function () {
 
 exports.write = function (address, state) {
 	//serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
+	console.log("serial write: " + address + ":" + state);
+};
+
+var lastPulse = false;
+exports.pulse = function(address, wavelength){
+	var interval = setInterval(function(){
+		exports.write(address, !lastPulse);
+		lastPulse = !lastPulse;
+	}, wavelength);
+	return interval;
 };

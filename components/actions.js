@@ -1,5 +1,6 @@
 var serial = require('./serial');
 var settings;
+var ignitorInterval = null;
 var outputs = new Array(4);
 
 exports.init = function(newSettings){
@@ -10,7 +11,10 @@ exports.init = function(newSettings){
 
 exports.ignitor = function ignitor(state){
 	var address = settings.outputs.ignitor;
-	serial.write(address, state);
+	if(state)
+		ignitorInterval = serial.pulse(address, 10);
+	else
+		clearInterval(ignitorInterval);
 	outputs[address] = state;
 };
 

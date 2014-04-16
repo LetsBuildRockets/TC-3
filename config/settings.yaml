@@ -4,7 +4,7 @@ debug: 0 # True/False
 # Sequence Config
 sequence:
   command0: 
-    time: -10
+    time: -5
     run: init
     params: ''
   command1:

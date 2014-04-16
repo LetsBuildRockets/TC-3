@@ -26,20 +26,19 @@ if (serialPortExists)
 			if (settings.debug)
 				console.log('data received: ' + data);
 		});
-
-		//serialTest(serialPort);
 	});
 
-function serialTest(port){
+if (process.argv.slice(2)[0] == '-test') {
 	var last = 0;
 	setInterval(function() {
 		if (last)
-			port.write("0:0\n");
+			serialPort.write("0:0\n");
 		else
-			port.write("0:1\n");
+			serialPort.write("0:1\n");
 		last = !last;
 	}, 500);
 }
+
 
 exports.write = function (address, state) {
 	if (serialPortExists)

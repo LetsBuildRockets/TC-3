@@ -46,24 +46,30 @@ io.sockets.on('connection', function (socket) {
 			if(settings.debug) console.log(sequencer.getsequenceState());
 		}
 	});
-	
+
 	setInterval(function() {
 		update();
 	}, 500);
 });
 
+String lastSensorsUpdate = "";
+String lastActionsUpdate = "";
 function update() {
 	var sensorsUpdate = "";
 	for(var s = 0; s < devices.sensors.length; s++){
 		sensorsUpdate += s + ":" + devices.sensors[s] + "\n";
 	}
-	//sendUpdate('sensor', sensorsUpdate);
-	
+	if(sensorsUpdate != lastSensorsUpdate)
+		sendUpdate('sensor', sensorsUpdate);
+	lastSensorsUpdate = sensorsUpdate;
+
 	var actionsUpdate = "";
 	for(var a = 0; a < actions.outputs.length; a++){
 		actionsUpdate += a + ":" + (actions.outputs[a] ? 1 : 0) + "\n";
 	}
-	sendUpdate('action', actionsUpdate);
+	if(actionsUpdate != lastActionsUpdate)
+		sendUpdate('action', actionsUpdate);
+	lastActionsUpdate = actionsUpdate;
 };
 
 function sendUpdate(name, data) {

@@ -4,7 +4,7 @@ var SerialPort = require("serialport").SerialPort;
 var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
 //list ports for rpi
-//lol i dont think i need this
+//lol i dont think i need this anymore?
 /*serialPort.list(function (err, ports) {
 	ports.forEach(function(port) {
 		console.log(port.comName);
@@ -36,5 +36,5 @@ serialPort.open(function () {
 });
 
 exports.write = function (address, state) {
-	serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
+	//serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
 };

@@ -1,6 +1,5 @@
 var gauge = new Array();
-var lights = new Array(0,0,0,0,0,0,0,0);
-var c;
+var lights = new Array(0, 0, 0, 0, 0, 0, 0, 0);
 
 window.onload = function(){
 	if(document.getElementById('g0'))
@@ -209,8 +208,7 @@ window.onload = function(){
 			refreshAnimationType: "linear",
 			gaugeWidthScale: 0.5
 		  });
-		
-	c = document.getElementById("lightsCanvas");
+
 	updateLights(lights);
 };
 
@@ -242,9 +240,9 @@ socket.on('sensor', function(data) {
 		gauge[id].refresh(data);
 });
 socket.on('action', function(data) {
-	var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
+	var id = parseInt(data.substring(0, data.indexOf(':')));
 	data = parseFloat(data.substring(data.indexOf(':') + 1, data.length));
-	lights[id] = data;
+	lights[id] = (data ? 1 : 0);
 	updateLights(lights);	
 });
 
@@ -266,14 +264,15 @@ function displayStatus(data){
 }
 
 function updateLights(lights){
+	var c = document.getElementById("lightsCanvas");
 	c.setAttribute('width', window.innerWidth);
 	c.setAttribute('height', 80);
 	var context = c.getContext("2d");
     var centerY = c.height / 2;
 	numberOfLights = 8;
-	for(i=0; i<numberOfLights; i++){
+	for(i = 0; i < numberOfLights; i++){
 		context.beginPath();
-		context.arc((i+1) * c.width/(numberOfLights+1), centerY, 25, 0, 2 * Math.PI, false);
+		context.arc((i + 1) * c.width/(numberOfLights + 1), centerY, 25, 0, 2 * Math.PI, false);
 		if(lights[i])
 			context.fillStyle = '#32cd32';
 		else			

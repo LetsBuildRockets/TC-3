@@ -1,16 +1,17 @@
 var serial = require('./serial');
 var settings;
-var outputs = new Array(24);
+var outputs = new Array(4);
 var sendUpdate;
 
 exports.init = function(newSendUpdate, newSettings){
 	settings = newSettings;
 	sendUpdate = newSendUpdate;
+	for(var i = 0; i < outputs.length; i++)
+		outputs[i] = 0;
+	
 	setInterval(function() {
 		update();
 	}, 500);
-	for(var i = 0; i < outputs.length; i++)
-		outputs[i] = 0;
 };
 
 exports.ignitor = function ignitor(state){
@@ -21,8 +22,8 @@ exports.ignitor = function ignitor(state){
 
 exports.fuelValve = function fuelValve(state){
 	var address = settings.outputs.fuelValve;
-	serial.write(address , state);
-	outputs[address ] = state;
+	serial.write(address, state);
+	outputs[address] = state;
 };
 
 exports.oxyValve = function oxyValve(state){
@@ -32,13 +33,13 @@ exports.oxyValve = function oxyValve(state){
 };
 
 exports.end = function(){
-	ignitor(false);
-	fuelValve(false);
-	oxyValve(false);
+	exports.ignitor(false);
+	exports.fuelValve(false);
+	exports.oxyValve(false);
 };
 
 function update(){
-	for(var a = 0; a <= outputs.length; a++){
-		sendUpdate('action', a + ":" + outputs[a]);
+	for(var a = 0; a < outputs.length; a++){
+		sendUpdate('action', a + ":" + (outputs[a] ? 1 : 0));
 	}
 }

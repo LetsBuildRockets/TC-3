@@ -25,7 +25,7 @@ exports.init = function init(newSendUpdate, newSettings){
 
 function update(){
 	for(var s = 0; s <= sensors.length; s++){
-		sendUpdate('sensor', s + ":" + sensors[s]);
+		//sendUpdate('sensor', s + ":" + sensors[s]);
 	}
 }
 

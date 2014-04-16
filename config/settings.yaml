@@ -4,11 +4,11 @@ debug: 0 # True/False
 # Sequence Config
 sequence:
   command0: 
-    time: -30
+    time: -10
     run: init
     params: ''
   command1:
-    time: -1
+    time: -2
     run: ignitor
     params: true
   command2: 
@@ -21,7 +21,7 @@ sequence:
     params: true
   command4: 
     time: 0.5
-    run: OxValve
+    run: oxyValve
     params: true
   command5: 
     time: 10
@@ -31,8 +31,8 @@ sequence:
 # Outputs
 outputs:
   ingitor: 0
-  fuelVavle: 1
-  oxyVavle: 2
+  fuelValve: 1
+  oxyValve: 2
   
 # Server Settings
 server:

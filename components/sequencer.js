@@ -9,6 +9,7 @@ var lastTimeSent = "";
 exports.init = function init(newActions, newSendUpdate, newSettings){
 	actions = newActions;
 	sendUpdate = newSendUpdate;
+	actions.init(newSendUpdate, newSettings);
 };
 
 exports.startSequence = function startSequence(settings) {
@@ -46,7 +47,6 @@ function que(index, commands, settings) {
 }
 
 sequence.init = function sequenceInit(settings, params){
-	actions.init(settings);
 	var hrTime = process.hrtime();
 	sequenceInitTime = (hrTime[0] + hrTime[1] / 1000000000);
 	sequenceState = "sequencer initialized";
@@ -62,7 +62,7 @@ sequence.fuelValve = function sequencefuelValve(settings, state){
 	actions.fuelValve(state);
 };
 
-sequence.oxyVavle = function sequenceOxyValve(settings, state){
+sequence.oxyValve = function sequenceOxyValve(settings, state){
 	sequenceState = "oxyValve " + state;
 	actions.oxyValve(state);
 };

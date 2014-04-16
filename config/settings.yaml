@@ -26,5 +26,5 @@ server:
   
 # I/O
 serial:
-  port: COM3
+  port: /dev/tty-usbserial1 #COM3
   baudrate: 9600

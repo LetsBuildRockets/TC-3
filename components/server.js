@@ -35,8 +35,7 @@ app.get('/estop', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
 	socket.emit('serverStatus', 'connected');
-
-
+	update(true);
 	socket.on('controlState', function (data) {
 		if(data == 'initiate') {
 			sequencer.startSequence(settings);
@@ -56,12 +55,12 @@ var lastSensorsUpdate = "";
 var lastActionsUpdate = "";
 var lastTimeUpdate = "";
 var lastSequenceUpdate = "";
-function update() {
+function update(force) {
 	var sensorsUpdate = "";
 	for(var s = 0; s < devices.sensors.length; s++){
 		sensorsUpdate += s + ":" + devices.sensors[s] + "\n";
 	}
-	if(sensorsUpdate != lastSensorsUpdate)
+	if(sensorsUpdate != lastSensorsUpdate || force)
 		sendUpdate('sensor', sensorsUpdate);
 	lastSensorsUpdate = sensorsUpdate;
 
@@ -69,12 +68,12 @@ function update() {
 	for(var a = 0; a < actions.outputs.length; a++){
 		actionsUpdate += a + ":" + (actions.outputs[a] ? 1 : 0) + "\n";
 	}
-	if(actionsUpdate != lastActionsUpdate)
+	if(actionsUpdate != lastActionsUpdate || force)
 		sendUpdate('action', actionsUpdate);
 	lastActionsUpdate = actionsUpdate;
 
 	var timeUpdate = sequencer.time();
-	if(timeUpdate != lastTimeUpdate)
+	if(timeUpdate != lastTimeUpdate || force)
 		sendUpdate('time', timeUpdate);
 	lastTimeUpdate = timeUpdate;
 

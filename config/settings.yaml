@@ -1,5 +1,5 @@
 # Debug mode
-debug: 0 # True/False
+debug: 0 # true/false
 
 # Sequence Config
 sequence:
@@ -33,6 +33,12 @@ outputs:
   ignitor: 0
   fuelValve: 1
   oxyValve: 2
+
+# Data log
+log:
+  file: "logs/log"
+  appenddate: 1 # true/false
+  extension: null
 
 # Server Settings
 server:

@@ -35,7 +35,7 @@ exports.init = function(newSettings) {
 exports.write = function (address, state) {
 	if (serialPortExists)
 		serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
-	if (settings.debug)
+	if (1)
 		console.log("serial write: " + address + ":" + state);
 };
 

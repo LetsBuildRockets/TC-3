@@ -7,18 +7,11 @@ var settings;
 exports.init = function(newSettings) {
 	settings = newSettings;
 
-	/*serialPortImport.list(function (err, ports) {
-		ports.forEach(function(port) {
-			if (serialPortExists == port.comName)
-				serialPortExists = true;
-			if (settings.debug)
-				console.log(port.comName);
-		});
-	});*/
+	serialPortExists = true;
+
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate
 	}, false, function(data){console.log(data); serialPortExists = false;});
-	serialPortExists = true;
 
 	if (serialPortExists)
 		serialPort.open(function () {

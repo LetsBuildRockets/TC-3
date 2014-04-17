@@ -43,7 +43,12 @@ sequence:
     time: 10
     run: end
     params: ''
-  
+ 
+# Devices
+devices:
+   names:
+    0: "temp"
+
 # Outputs
 outputs:
   ignitor: 0

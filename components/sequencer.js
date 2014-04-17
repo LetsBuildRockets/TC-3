@@ -1,4 +1,4 @@
-var actions;
+var devices, actions;
 var sequenceState = "";
 var sequenceRunning = false;
 var sequence = { };
@@ -7,8 +7,9 @@ var countdown;
 var settings;
 var lastTime = null;
 
-exports.init = function init(newSettings, newActions){
+exports.init = function init(newSettings, newDevices, newActions){
 	settings = newSettings;
+	devices = newDevices;
 	actions = newActions;
 
 	lastTime = settings.sequence.command0.time;
@@ -49,6 +50,7 @@ sequence.init = function sequenceInit(settings, params){
 	var hrTime = process.hrtime();
 	sequenceInitTime = (hrTime[0] + hrTime[1] / 1000000000);
 	actions.startCountdown();
+	devices.startCountdown();
 	sequenceState = "sequencer initialized";
 };
 

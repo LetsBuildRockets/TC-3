@@ -1,38 +1,49 @@
 var fs = require('fs');
 var stream = null;
 
-exports.init = function (settings, logsFolder, fileName) {
+//var logs = [];
+//logs[0] = new logger({log: {appendDate: 0, extension: null}}, "logs", "test");
+
+function Logger(settings, logsFolder, fileName) {
 	var date = new Date();
 	var name = logsFolder + "/" + fileName + (settings.log.appendDate ? " " + date.getFullYear() + " " + date.getMonth() + " " + date.getDay() + "  " + date.getHours() + " " + date.getMinutes() + " " + date.getSeconds() : "") + (settings.log.extension ? settings.log.extension : "");
+	this.fs = require('fs');
 	if (!fs.existsSync(name)) 
-		stream = fs.createWriteStream(name);
+		this.stream = this.fs.createWriteStream(name);
 	else
 		console.log("could not open file: " + name);
 };
 
-exports.write = function (str) {
-	if (stream)
-		stream.write(str.toString() + "\n");
-		//stream.write(new Date().toUTCString() + "," + str.toString() + "\n");
+Logger.prototype.write = function (str) {
+	if (this.stream)
+		this.stream.write(str.toString() + "\n");
+	//stream.write(new Date().toUTCString() + "," + str.toString() + "\n");
 };
 
-exports.close = function() {
+Logger.prototype.logArray = function (time, dataArray, convert10){
+	var str = "";
+	for(var i = 0; i < dataArray.length; i++)
+		str += (convert10 ? (dataArray[i] ? "1" : "0") : dataArray[i]) + ",";
+	this.write(time + "," + str);
+};
+
+Logger.prototype.close = function() {
 	if (stream)
-		stream.end();
-	stream = null;
+		this.stream.end();
+	this.stream = null;
 };
 
 
 //test code via arg -test
 if (process.argv.slice(2)[0] == '-test') {
-	exports.init({log: {file: "logs/test", appendDate: 1, extension: null}});
-	if (stream)
-		stream.once('open', function(fd) {
-			stream.write("foo");
-			stream.write("bar");
+	new logger({log: {file: "logs/test", appendDate: 1, extension: null}});
+	if (this.stream)
+		this.stream.once('open', function(fd) {
+			this.stream.write("foo");
+			this.stream.write("bar");
 		});
 	for (var i = 0; i < 10; i++)
-		exports.write(i);
+		Logger.prototype.write(i);
 };
 
 /*
@@ -43,15 +54,16 @@ if (process.argv.slice(2)[0] == '-test') {
 if (process.argv.slice(2)[0] == '-clear') {
 	if (path = process.argv.slice(2)[1]) {
 		if (process.argv.slice(2)[2] == "-a") {
-			fs.readdirSync(path).forEach(function(file, index){
+			this.fs.readdirSync(path).forEach(function(file, index){
 				var curPath = path + "/" + file;
-				fs.unlinkSync(curPath);
+				this.fs.unlinkSync(curPath);
 			});
 			console.log('successfully deleted ' + path + "/*");
 		} else {
-			fs.unlinkSync(path);
+			this.fs.unlinkSync(path);
 			console.log('successfully deleted ' + path);
 		}
 	} else
 		console.log("no path specified!");
 };
+module.exports = Logger;

@@ -1,7 +1,13 @@
 var sensors = new Array();
 var settings;
+var sequencer;
+var logger;
+var devicesNames = new Array(11);
 
-exports.init = function init(newSettings){
+exports.init = function init(newSettings, newSequencer, newLogger){
+	logger = newLogger;
+	settings = newSettings;
+	sequencer = newSequencer;
 	sensors[0] = 0;
 	sensors[1] = 5;
 	sensors[2] = 10;
@@ -13,10 +19,16 @@ exports.init = function init(newSettings){
 	sensors[8] = 40;
 	sensors[9] = 45;
 	sensors[10] = 50;
-	
-	settings = newSettings;
+
+	for(var i = 0; i < sensors.length; i++)
+		devicesNames[i] = (settings.devices.names[i] ? settings.devices.names[i] : "NaN");
+	logger.logArray(sequencer.time(), devicesNames);
 };
 
-
+exports.startCountdown = function() {
+	logDevices = setInterval(function(){
+		logger.logArray(sequencer.time(), sensors);
+	},100);
+};
 
 exports.sensors = sensors;

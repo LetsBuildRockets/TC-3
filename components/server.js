@@ -67,7 +67,7 @@ function update(force) {
 		sendUpdate('action', actionsUpdate);
 	lastActionsUpdate = actionsUpdate;
 
-	var timeUpdate = sequencer.time();
+	var timeUpdate = Math.round(sequencer.time());
 	if(timeUpdate != lastTimeUpdate || force)
 		sendUpdate('time', timeUpdate);
 	lastTimeUpdate = timeUpdate;

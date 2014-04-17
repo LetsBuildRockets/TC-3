@@ -51,12 +51,18 @@ outputs:
   ignitorOxyValve: 2
   fuelValve: 3
   oxyValve: 4
+  names:
+    0: "Ignitor"
+    1: "Ignitor Fuel Valve"
+    2: "Ignitor Oxygen Valve"
+    3: "Main Fuel Valve"
+    4: "Main Oxygen Valve"
 
 # Data log
 log:
-  file: "logs/log"
-  appendDate: 1 # true/false
-  extension: null
+  folder: "logs/"
+  appendDate: 0 # true/false
+  extension: ".csv"
 
 # Server Settings
 server:

@@ -11,17 +11,19 @@ exports.init = function(newSettings) {
 
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate
-	}, false, function(data){console.log(data); serialPortExists = false;});
+	}, true, function(data){console.log(data); serialPortExists = false;});
 
-	if (serialPortExists)
-		serialPort.open(function () {
-			if (settings.debug)
-				console.log(serialPort.comName + ' opened');
-			serialPort.on('data', function(data) {
+	setTimeout(function() {
+		if (serialPortExists)
+			serialPort.open(function () {
 				if (settings.debug)
-					console.log('data received: ' + data);
+					console.log(serialPort.comName + ' opened');
+				serialPort.on('data', function(data) {
+					if (settings.debug)
+						console.log('data received: ' + data);
+				});
 			});
-		});
+	}, 1000);
 };
 
 
@@ -43,12 +45,16 @@ exports.pulse = function(address, wavelength){
 
 //test code via arg -test
 if (process.argv.slice(2)[0] == '-test') {
+	exports.init({serial: {port: "COM3", baudrate: 9600}});
 	var last = 0;
 	setInterval(function() {
-		/*if (last)
-			serialPort.write("0:0\n");
-		else
-			serialPort.write("0:1\n");
-		last = !last;*/
+		if (serialPortExists) {
+			if (last)
+				serialPort.write("0:0\n");
+			else
+				serialPort.write("0:1\n");
+			last = !last;
+		} else
+			console.log("serial port not open!!!");
 	}, 500);
 }

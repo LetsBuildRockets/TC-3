@@ -3,18 +3,21 @@ var sequenceState = "";
 var sequenceRunning = false;
 var sequence = { };
 var sequenceInitTime;
-var lastTimeSent = "";
 var countdown;
+var settings;
+var lastTime = null;
 
-exports.init = function init(newActions, newSettings){
+exports.init = function init(newSettings, newActions){
+	settings = newSettings;
 	actions = newActions;
+
+	lastTime = settings.sequence.command0.time;
 };
 
 exports.startSequence = function startSequence(settings) {
 	if(!sequenceRunning){
 		sequenceRunning = true;
 		countdown = settings.sequence.command0.time;
-
 		var commandNum = -1;
 		var commands = new Array();
 
@@ -45,6 +48,7 @@ function que(index, commands, settings) {
 sequence.init = function sequenceInit(settings, params){
 	var hrTime = process.hrtime();
 	sequenceInitTime = (hrTime[0] + hrTime[1] / 1000000000);
+	actions.startCountdown();
 	sequenceState = "sequencer initialized";
 };
 
@@ -87,7 +91,9 @@ exports.time = function updateTime(){
 	if(sequenceRunning) {
 		var hrTime = process.hrtime();
 		var T = countdown+(hrTime[0] + hrTime[1] / 1000000000)-sequenceInitTime;
-		return Math.round(T);
-	} else
-		return null;
+		lastTime = T;
+		return T;
+	} else {
+		return lastTime;
+	}
 };

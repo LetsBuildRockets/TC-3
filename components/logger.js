@@ -1,9 +1,10 @@
 var fs = require('fs');
 var stream = null;
 
-exports.init = function (settings) {
-	var name = settings.log.file + (settings.log.appendDate ? " " + new Date() : "") + (settings.log.extension ? settings.log.extension : "");
-	if (!fs.existsSync(name))
+exports.init = function (settings, logsFolder, fileName) {
+	var date = new Date();
+	var name = logsFolder + "/" + fileName + (settings.log.appendDate ? " " + date.getFullYear() + " " + date.getMonth() + " " + date.getDay() + "  " + date.getHours() + " " + date.getMinutes() + " " + date.getSeconds() : "") + (settings.log.extension ? settings.log.extension : "");
+	if (!fs.existsSync(name)) 
 		stream = fs.createWriteStream(name);
 	else
 		console.log("could not open file: " + name);
@@ -12,11 +13,13 @@ exports.init = function (settings) {
 exports.write = function (str) {
 	if (stream)
 		stream.write(str.toString() + "\n");
+		//stream.write(new Date().toUTCString() + "," + str.toString() + "\n");
 };
 
 exports.close = function() {
 	if (stream)
 		stream.end();
+	stream = null;
 };
 
 

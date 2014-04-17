@@ -15,8 +15,8 @@ exports.init = function init(newSettings){
 	sensors[10] = 50;
 	
 	settings = newSettings;
-
-
 };
+
+
 
 exports.sensors = sensors;

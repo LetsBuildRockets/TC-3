@@ -1,21 +1,16 @@
-var yaml = require('js-yaml');
-var fs = require('fs');
 var express = require('express');
 var app = express()
 , server = require('http').createServer(app)
 , io = require('socket.io').listen(server);
+var sequencer, devices, settings, actions;
 
-var sequencer = require('./sequencer');
-var devices = require('./devices');
-var actions = require('./actions');
-var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
+exports.init = function init(newSettings, newSequencer, newDevices, newActions){
+	settings = newSettings;
+	sequencer = newSequencer;
+	devices = newDevices;
+	actions = newActions;
 
-exports.init = function init(){
 	server.listen(settings.server.port);
-
-	devices.init(settings);
-	actions.init(settings);
-	sequencer.init(actions, settings);
 };
 
 

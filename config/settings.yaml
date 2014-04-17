@@ -37,7 +37,7 @@ outputs:
 # Data log
 log:
   file: "logs/log"
-  appenddate: 1 # true/false
+  appendDate: 1 # true/false
   extension: null
 
 # Server Settings

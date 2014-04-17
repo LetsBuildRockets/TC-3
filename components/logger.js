@@ -1,7 +1,5 @@
 var fs = require('fs');
-
 var stream = null;
-
 
 exports.init = function (settings) {
 	var name = settings.log.file + (settings.log.appendDate ? " " + new Date() : "") + (settings.log.extension ? settings.log.extension : "");
@@ -22,7 +20,7 @@ exports.close = function() {
 };
 
 
-//test code via arg '-test'
+//test code via arg -test
 if (process.argv.slice(2)[0] == '-test') {
 	exports.init({log: {file: "logs/test", appendDate: 1, extension: null}});
 	if (stream)
@@ -34,6 +32,11 @@ if (process.argv.slice(2)[0] == '-test') {
 		exports.write(i);
 };
 
+/*
+ * clear logs via arg
+ * to clear one log: -clear [file path]
+ * to clear all logs: -clear [folder path] -a
+ */
 if (process.argv.slice(2)[0] == '-clear') {
 	if (path = process.argv.slice(2)[1]) {
 		if (process.argv.slice(2)[2] == "-a") {

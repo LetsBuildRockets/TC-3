@@ -28,18 +28,6 @@ if (serialPortExists)
 		});
 	});
 
-if (process.argv.slice(2)[0] == '-test') {
-	var last = 0;
-	setInterval(function() {
-		if (last)
-			serialPort.write("0:0\n");
-		else
-			serialPort.write("0:1\n");
-		last = !last;
-	}, 500);
-}
-
-
 exports.write = function (address, state) {
 	if (serialPortExists)
 		serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
@@ -55,3 +43,15 @@ exports.pulse = function(address, wavelength){
 	}, wavelength);
 	return interval;
 };
+
+//test code via arg -test
+if (process.argv.slice(2)[0] == '-test') {
+	var last = 0;
+	setInterval(function() {
+		if (last)
+			serialPort.write("0:0\n");
+		else
+			serialPort.write("0:1\n");
+		last = !last;
+	}, 500);
+}

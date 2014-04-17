@@ -6,12 +6,11 @@ var settings;
 
 exports.init = function(newSettings) {
 	settings = newSettings;
-
 	serialPortExists = true;
 
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate
-	}, true, function(data){console.log("error" + data); serialPortExists = false;});
+	}, true, function(data){console.log("error: " + data); serialPortExists = false;});
 
 	setTimeout(function() {
 		if (serialPortExists)
@@ -45,7 +44,7 @@ exports.pulse = function(address, wavelength){
 
 //test code via arg -test
 if (process.argv.slice(2)[0] == '-test') {
-	exports.init({serial: {port: "COM3", baudrate: 9600}});
+	exports.init({serial: {port: process.argv.slice(2)[1], baudrate: 9600}});
 	var last = 0;
 	setInterval(function() {
 		if (serialPortExists) {

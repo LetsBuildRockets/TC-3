@@ -1,22 +1,24 @@
-var yaml = require('js-yaml');
-var fs = require('fs');
 var serialPort = require("serialport");
 var SerialPort = serialPort.SerialPort;
-var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 var serialPortExists = false;
+var settings;
 
-serialPort.list(function (err, ports) {
-	ports.forEach(function(port) {
-		if (serialPortExists == port.comName)
-			serialPortExists = true;
-		console.log(port.comName);
+exports.init = function(newSettings) {
+	settings = newSettings;
+
+	serialPort.list(function (err, ports) {
+		ports.forEach(function(port) {
+			if (serialPortExists == port.comName)
+				serialPortExists = true;
+			if (settings.debug)
+				console.log(port.comName);
+		});
 	});
-});
+	serialPort = new SerialPort(settings.serial.port, {
+		baudrate: settings.serial.baudrate
+	}, true, function(data){console.log(data); serialPortExists = false;});
+};
 
-
-serialPort = new SerialPort(settings.serial.port, {
-	baudrate: settings.serial.baudrate
-}, true, function(data){console.log(data); serialPortExists = false;});
 
 if (serialPortExists)
 	serialPort.open(function () {

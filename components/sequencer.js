@@ -53,6 +53,16 @@ sequence.ignitor = function sequenceIgnitor(settings, state){
 	actions.ignitor(state);
 };
 
+sequence.ignitorFuelValve = function sequenceIgnitorFuelValve(settings, state){
+	sequenceState = "ignitorFuelValve " + state;
+	actions.ignitorFuelValve(state);
+};
+
+sequence.ignitorOxyValve = function sequenceIgnitorOxyValve(settings, state){
+	sequenceState = "ignitorOxyValve " + state;
+	actions.ignitorOxyValve(state);
+};
+
 sequence.fuelValve = function sequencefuelValve(settings, state){
 	sequenceState = "fuelValve " + state;
 	actions.fuelValve(state);

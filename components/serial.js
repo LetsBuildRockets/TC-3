@@ -7,17 +7,18 @@ var settings;
 exports.init = function(newSettings) {
 	settings = newSettings;
 
-	serialPortImport.list(function (err, ports) {
+	/*serialPortImport.list(function (err, ports) {
 		ports.forEach(function(port) {
 			if (serialPortExists == port.comName)
 				serialPortExists = true;
 			if (settings.debug)
 				console.log(port.comName);
 		});
-	});
+	});*/
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate
 	}, false, function(data){console.log(data); serialPortExists = false;});
+	serialPortExists = true;
 };
 
 
@@ -32,8 +33,6 @@ if (serialPortExists)
 	});
 
 exports.write = function (address, state) {
-	while(true)
-		console.log(serialPortExists);
 	if (serialPortExists)
 		serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
 	if (settings.debug)

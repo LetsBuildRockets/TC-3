@@ -11,7 +11,7 @@ exports.init = function(newSettings) {
 
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate
-	}, true, function(data){console.log(data); serialPortExists = false;});
+	}, true, function(data){console.log("error" + data); serialPortExists = false;});
 
 	setTimeout(function() {
 		if (serialPortExists)
@@ -30,7 +30,7 @@ exports.init = function(newSettings) {
 exports.write = function (address, state) {
 	if (serialPortExists)
 		serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
-	if (1)
+	if (debug)
 		console.log("serial write: " + address + ":" + state);
 };
 

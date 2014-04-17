@@ -13,7 +13,7 @@ exports.init = function(newSettings, newSerial){
 exports.ignitor = function ignitor(state){
 	var address = settings.outputs.ignitor;
 	if(state)
-		ignitorInterval = serial.pulse(address, 10);
+		ignitorInterval = serial.pulse(address, 100);
 	else {
 		clearInterval(ignitorInterval);
 		serial.write(address, false);

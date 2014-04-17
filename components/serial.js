@@ -52,10 +52,10 @@ exports.pulse = function(address, wavelength){
 if (process.argv.slice(2)[0] == '-test') {
 	var last = 0;
 	setInterval(function() {
-		if (last)
+		/*if (last)
 			serialPort.write("0:0\n");
 		else
 			serialPort.write("0:1\n");
-		last = !last;
+		last = !last;*/
 	}, 500);
 }

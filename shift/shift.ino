@@ -50,13 +50,12 @@ void serialEvent() {
     } else if (inChar == '\n' && address > -1) {
       boolean state = (command.toInt() == 1);
             
-      Serial.println(address);
-      Serial.println(state);
+      Serial.println(address + ":" + state);
       
       updateShiftRegister(address, state);
       
-      Serial.print("freeRAM=");
-      Serial.println(freeRam());
+      //Serial.print("freeRAM=");
+      //Serial.println(freeRam());
       address = -1;
       command = "";
     } else

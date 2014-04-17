@@ -34,10 +34,10 @@ io.sockets.on('connection', function (socket) {
 	socket.on('controlState', function (data) {
 		if(data == 'initiate') {
 			sequencer.startSequence(settings);
-			if(settings.debug) console.log(sequencer.getsequenceState());
+			if(settings.debug) console.log(sequencer.sequenceState());
 		} else if (data == 'stop') {
 			sequencer.stopSequence(settings);
-			if(settings.debug) console.log(sequencer.getsequenceState());
+			if(settings.debug) console.log(sequencer.sequenceState());
 		}
 	});
 

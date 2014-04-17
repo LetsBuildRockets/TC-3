@@ -19,18 +19,18 @@ exports.init = function(newSettings) {
 		baudrate: settings.serial.baudrate
 	}, false, function(data){console.log(data); serialPortExists = false;});
 	serialPortExists = true;
+
+	if (serialPortExists)
+		serialPort.open(function () {
+			if (settings.debug)
+				console.log(serialPort.comName + ' opened');
+			serialPort.on('data', function(data) {
+				if (settings.debug)
+					console.log('data received: ' + data);
+			});
+		});
 };
 
-
-if (serialPortExists)
-	serialPort.open(function () {
-		if (settings.debug)
-			console.log(serialPort.comName + ' opened');
-		serialPort.on('data', function(data) {
-			if (settings.debug)
-				console.log('data received: ' + data);
-		});
-	});
 
 exports.write = function (address, state) {
 	if (serialPortExists)

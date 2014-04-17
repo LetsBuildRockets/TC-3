@@ -19,11 +19,9 @@ exports.init = function(newSettings) {
 	setTimeout(function() {
 		if (serialPortExists)
 			serialPort.open(function () {
-				if (settings.debug)
-					console.log(serialPort.comName + ' opened');
+				if (settings.debug) console.log(serialPort.comName + ' opened');
 				serialPort.on('data', function(data) {
-					if (settings.debug)
-						console.log('data received: ' + data);
+					if (settings.debug) console.log('data received: ' + data);
 				});
 			});
 	}, 1);
@@ -33,8 +31,7 @@ exports.init = function(newSettings) {
 exports.write = function (address, state) {
 	if (serialPortExists)
 		serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
-	if (debug)
-		console.log("serial write: " + address + ":" + state);
+	if (settings.debug) console.log("serial write: " + address + ":" + state);
 };
 
 var lastPulse = false;

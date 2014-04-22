@@ -1,6 +1,6 @@
 {
   "name": "Test-Stand",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Rocket Test Stand",
   "homepage": "https://github.com/ericsims/Test-Stand",
   "author": {
@@ -12,12 +12,12 @@
     "url": "git://github.com/ericsims/Test-Stand.git"
   },
   "dependencies": {
-    "socket.io": "*",
-    "express": "*",
-    "js-yaml": "*",
-    "serialport": "*"
+    "socket.io": ">= 0.9.16",
+    "express": ">= 3.0",
+    "js-yaml": ">= 3.0",
+    "serialport": ">= 1.4"
   },
   "engines": {
-    "node": ">= 0.6"
+    "node": ">= 0.10"
   }
 }

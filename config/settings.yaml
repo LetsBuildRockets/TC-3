@@ -1,10 +1,10 @@
 # Debug mode
-debug: 1 # true/false
+debug: 0 # true/false
 
 # Sequence Config
 sequence:
   command0: 
-    time: -10
+    time: -2
     run: init
     params: ''
   command1:

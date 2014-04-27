@@ -31,7 +31,6 @@ exports.init = function init(newSettings, newSequencer, newSerial, newLogger){
 
 exports.updateSensors = function (newSensors){
 	sensors[0] = newSensors[0];
-	console.log(sensors[0]);
 };
 
 exports.startCountdown = function() {

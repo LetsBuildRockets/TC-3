@@ -22,10 +22,10 @@ exports.init = function(newSettings, newUpdate) {
 	setTimeout(function() {
 		if (serialPortExists)
 			serialPort.open(function () {
-				if (settings.debug) console.log(serialPort.comName + ' opened');
+				if (settings.debug) console.log(settings.serial.port + ' opened');
 				serialPort.on('data', function(data) {
 					if (settings.debug) console.log('data received: ' + data);
-					if (update) {
+					if (update != undefined) {
 						dataArray[0] = parseFloat(data);
 						console.log("data");
 						update(dataArray);

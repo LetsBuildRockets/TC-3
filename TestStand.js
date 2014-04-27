@@ -19,5 +19,5 @@ logs["devices"] = new logger(settings, logsFolder, "devices");
 server.init(settings, sequencer, devices, actions);
 sequencer.init(settings, devices, actions);
 actions.init(settings, sequencer, serial, logs["actions"]);
-devices.init(settings, sequencer, logs["devices"]);
-serial.init(settings);
+devices.init(settings, sequencer, serial, logs["devices"]);
+serial.init(settings, devices.updateSensors);

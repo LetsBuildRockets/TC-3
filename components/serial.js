@@ -1,12 +1,15 @@
 var SerialPort = require("serialport").SerialPort;
 var serialPortExists = false;
 var serialPort;
+var update;
 var settings;
 
-exports.init = function(newSettings) {
+exports.init = function(newSettings, newUpdate) {
 	settings = newSettings;
+	update = newUpdate;
+
 	serialPortExists = true;
-	
+
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate
 	}, false);
@@ -20,13 +23,16 @@ exports.init = function(newSettings) {
 		if (serialPortExists)
 			serialPort.open(function () {
 				if (settings.debug) console.log(serialPort.comName + ' opened');
-				serialPort.on('data', function(data) {
-					if (settings.debug) console.log('data received: ' + data);
-				});
 			});
 	}, 1);
 };
 
+if (serialPortExists)
+	serialPort.on('data', function(data) {
+		if (settings.debug) console.log('data received: ' + data);
+		dataArray[0] = parseFloat(data);
+		update(dataArray);
+	});
 
 exports.write = function (address, state) {
 	if (serialPortExists)

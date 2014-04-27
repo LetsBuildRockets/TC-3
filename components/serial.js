@@ -13,7 +13,7 @@ exports.init = function(newSettings, newUpdate) {
 
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate,
-		parser: serialportObject.parsers.readline("\r")
+		parser: serialportObject.parsers.readline("\n")
 	}, false);
 
 	serialPort.on('error', function(err){

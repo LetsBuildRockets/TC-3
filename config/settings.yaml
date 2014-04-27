@@ -1,5 +1,5 @@
 # Debug mode
-debug: 0 # true/false
+debug: 1 # true/false
 
 # Sequence Config
 sequence:

@@ -53,6 +53,11 @@ exports.pulse = function(address, wavelength){
 //test code via arg -test
 if (process.argv.slice(2)[0] == '-test') {
 	exports.init({serial: {port: process.argv.slice(2)[1], baudrate: 9600}});
+
+	serialPort.on('data', function(data) {
+		console.log('data received: ' + data);
+	});
+
 	var last = 0;
 	setInterval(function() {
 		if (serialPortExists) {

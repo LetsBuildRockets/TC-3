@@ -24,7 +24,7 @@ window.onload = function(){
 		gauge[1] = new JustGage({
 			id: "g1", 
 			min: 0,
-			max: 50,
+			max: 1024,
 			title: "s1",
 			label: "units",  
 			showMinMax: false,

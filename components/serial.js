@@ -27,12 +27,13 @@ exports.init = function(newSettings, newUpdate) {
 	}, 1);
 };
 
-if (serialPortExists)
-	serialPort.on('data', function(data) {
+
+serialPort.on('data', function(data) {
 		if (settings.debug) console.log('data received: ' + data);
 		dataArray[0] = parseFloat(data);
+		console.log("data");
 		update(dataArray);
-	});
+});
 
 exports.write = function (address, state) {
 	if (serialPortExists)

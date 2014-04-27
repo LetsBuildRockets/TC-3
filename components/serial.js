@@ -25,10 +25,12 @@ exports.init = function(newSettings, newUpdate) {
 	});
 
 	serialPort.open(function() {
+		console.log("opened that crap");
 		serialPort.on('data', function(data) {
 			console.log("data");
 			if (settings.debug) console.log('data received: ' + data);
 			if (update != undefined) {
+				console.log("SENT");
 				dataArray[0] = parseFloat(data);
 				update(dataArray);
 			}

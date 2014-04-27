@@ -36,6 +36,8 @@ void loop() {
     updateShiftRegister(outputs);
     delay(10);
   }*/
+  Serial.println(analogRead(0));
+  delay(1);
 }
 
 int freeRam () {

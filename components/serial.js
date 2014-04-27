@@ -24,15 +24,15 @@ exports.init = function(newSettings, newUpdate) {
 	serialPort.on('open', function () {
 		if (settings.debug) console.log(settings.serial.port + ' opened');
 
-		serialPort.on('data', function(data) {
+		/*serialPort.on('data', function(data) {
 			console.log("data");
-			/*if (settings.debug) console.log('data received: ' + data);
+			if (settings.debug) console.log('data received: ' + data);
 			if (update != undefined) {
 				console.log("SENT");
 				dataArray[0] = parseFloat(data);
 				update(dataArray);
-			}*/
-		});
+			}
+		});*/
 	});
 };
 

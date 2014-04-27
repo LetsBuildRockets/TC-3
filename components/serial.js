@@ -22,18 +22,19 @@ exports.init = function(newSettings, newUpdate) {
 	setTimeout(function() {
 		if (serialPortExists)
 			serialPort.open(function () {
+				serialPortExists = true;
 				if (settings.debug) console.log(serialPort.comName + ' opened');
 			});
 	}, 1);
 };
 
-
-serialPort.on('data', function(data) {
+if (serialPortExists)
+	serialPort.on('data', function(data) {
 		if (settings.debug) console.log('data received: ' + data);
 		dataArray[0] = parseFloat(data);
 		console.log("data");
 		update(dataArray);
-});
+	});
 
 exports.write = function (address, state) {
 	if (serialPortExists)

@@ -10,7 +10,7 @@ exports.init = function init(newSettings, newSequencer, newSerial, newLogger){
 	settings = newSettings;
 	serial = newSerial;
 	sequencer = newSequencer;
-	
+
 	sensors[0] = 0;
 	sensors[1] = 5;
 	sensors[2] = 10;
@@ -26,6 +26,12 @@ exports.init = function init(newSettings, newSequencer, newSerial, newLogger){
 	for(var i = 0; i < sensors.length; i++)
 		devicesNames[i] = (settings.devices.names[i] ? settings.devices.names[i] : "NaN");
 	logger.logArray(sequencer.time(), devicesNames);
+
+	//Create Random Data
+	/*setInterval(function(){
+		for(var i = 0; i < sensors.length; i++)
+			sensors[i] = Math.round(Math.random()*50);
+	},1000);*/
 };
 
 

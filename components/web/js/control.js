@@ -1,5 +1,8 @@
 var gauge = new Array();
-var lights = new Array(0, 0, 0, 0, 0, 0, 0, 0);
+var lights = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+var lineChartData = new Object();
+var chart = new Object();
+var time = 0, chartIndex = 0;
 
 window.onload = function(){
 	if(document.getElementById('g0'))
@@ -208,9 +211,46 @@ window.onload = function(){
 			refreshAnimationType: "linear",
 			gaugeWidthScale: 0.5
 		  });
+		
+	lineChartData = {
+			labels : [],
+			datasets : [
+				{
+					fillColor : "rgba(0,0,0,0)",
+					strokeColor : "rgba(220,220,220,1)",
+					pointColor : "rgba(220,220,220,1)",
+					pointStrokeColor : "#fff",
+					data : []
+				},
+				{
+					fillColor : "rgba(0,0,0,0)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : []
+				},
+				{
+					fillColor : "rgba(0,0,0,0)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : []
+				},
+				{
+					fillColor : "rgba(0,0,0,0)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : []
+				}
+			]
+		}
 
-	updateLights(lights);
-};
+	chart = new Chart(document.getElementById("graphCanvas").getContext("2d"));
+	chart.Line(lineChartData, {animation: true});
+
+	updateLights();
+}
 
 var socket = io.connect(location.host);
 socket.on('serverStatus', function (data) {
@@ -226,24 +266,26 @@ socket.on('sequenceState', function (data) {
 	displayStatus(data);
 });
 socket.on('time', function (data) {
+	time = data;
 	if(gauge[0])
 		gauge[0].refresh(parseFloat(data));
 	if(data >= 0) {
 		data = "+" + data;
-	}
-	document.getElementById('time').value = ('T'+data);
+	}	document.getElementById('time').value = ('T'+data);
 });
 socket.on('sensor', function(data) {
 	while(data.length > 1){
 		var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
 		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));
 		data = data.substring(data.indexOf('\n') + 1, data.length);
+		if(lineChartData.datasets[id])
+			lineChartData.datasets[id].data[chartIndex] = state;
 		if(gauge[id])
 			gauge[id].refresh(state);
 	}
+	updateChart();
 });
 socket.on('action', function(data) {
-	console.log("UPDATE");
 	while(data.length > 1){
 		var id = parseInt(data.substring(0, data.indexOf(':')));
 		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));
@@ -270,22 +312,28 @@ function displayStatus(data){
 	document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight;
 }
 
-function updateLights(lights){
+function updateChart(){	
+	lineChartData.labels[chartIndex] = time;	
+	chartIndex++;	
+	chart.Line(lineChartData, {animation: false});
+}
+
+function updateLights(){
 	var c = document.getElementById("lightsCanvas");
 	c.setAttribute('width', window.innerWidth);
-	c.setAttribute('height', 80);
+	c.setAttribute('height', 40);
 	var context = c.getContext("2d");
     var centerY = c.height / 2;
-	numberOfLights = 8;
+	numberOfLights = lights.length;
 	for(i = 0; i < numberOfLights; i++){
 		context.beginPath();
-		context.arc((i + 1) * c.width/(numberOfLights + 1), centerY, 25, 0, 2 * Math.PI, false);
+		context.arc((i + 1) * c.width/(numberOfLights + 1), centerY, 10, 0, 2 * Math.PI, false);
 		if(lights[i])
 			context.fillStyle = '#32cd32';
 		else			
 			context.fillStyle = 'gray';
 		context.fill();
-		context.lineWidth = 5;
+		context.lineWidth = 2;
 		context.strokeStyle = 'black';//'#003300';
 		context.stroke();
 	}

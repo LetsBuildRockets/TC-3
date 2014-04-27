@@ -1,4 +1,4 @@
-var serialportObject = require("serialport")t;
+var serialportObject = require("serialport");
 var SerialPort = serialportObject.SerialPort;
 var serialPortExists = false;
 var serialPort;

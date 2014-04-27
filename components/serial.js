@@ -13,7 +13,7 @@ exports.init = function(newSettings, newUpdate) {
 
 	serialPort = new SerialPort(settings.serial.port, {
 		baudrate: settings.serial.baudrate,
-	    parser: serialportObject.parsers.readline("\n")
+		parser: serialportObject.parsers.readline("\r")
 	}, false);
 
 	serialPort.on('error', function(err){
@@ -23,9 +23,7 @@ exports.init = function(newSettings, newUpdate) {
 
 	serialPort.on('open', function () {
 		if (settings.debug) console.log(settings.serial.port + ' opened');
-	});
 
-	serialPort.open(function() {
 		serialPort.on('data', function(data) {
 			console.log("data");
 			if (settings.debug) console.log('data received: ' + data);

@@ -37,7 +37,7 @@ void loop() {
     delay(10);
   }*/
   Serial.println(analogRead(0));
-  delay(1);
+  delay(100);
 }
 
 int freeRam () {
@@ -72,7 +72,6 @@ void serialEvent() {
     }
     command += inChar;
   }
-  delay(1);
 }
      
 void updateShiftRegister(int address, boolean state) {

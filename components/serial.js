@@ -12,8 +12,7 @@ exports.init = function(newSettings, newUpdate) {
 	serialPortExists = true;
 
 	serialPort = new SerialPort(settings.serial.port, {
-		baudrate: settings.serial.baudrate,
-		parser: serialportObject.parsers.readline("\n")
+		baudrate: settings.serial.baudrate
 	}, false);
 
 	serialPort.on('error', function(err){
@@ -24,7 +23,7 @@ exports.init = function(newSettings, newUpdate) {
 	serialPort.on('open', function () {
 		if (settings.debug) console.log(settings.serial.port + ' opened');
 
-		/*serialPort.on('data', function(data) {
+		serialPort.on('data', function(data) {
 			console.log("data");
 			if (settings.debug) console.log('data received: ' + data);
 			if (update != undefined) {
@@ -32,7 +31,7 @@ exports.init = function(newSettings, newUpdate) {
 				dataArray[0] = parseFloat(data);
 				update(dataArray);
 			}
-		});*/
+		});
 	});
 };
 

@@ -46,18 +46,18 @@ io.sockets.on('connection', function (socket) {
 	}, 500);
 });
 
-var lastSensorsUpdate = "";
+var lastDeviceUpdate = "";
 var lastActionsUpdate = "";
 var lastTimeUpdate = "";
 var lastSequenceUpdate = "";
 function update(force) {
-	var sensorsUpdate = "";
-	for(var s = 0; s < devices.sensors.length; s++){
-		sensorsUpdate += s + ":" + devices.sensors[s] + "\n";
+	var deviceUpdate = "";
+	for(var s = 0; s < devices.device.length; s++){
+		deviceUpdate += s + ":" + devices.device[s] + "\n";
 	}
-	if(sensorsUpdate != lastSensorsUpdate || force)
-		sendUpdate('sensor', sensorsUpdate);
-	lastSensorsUpdate = sensorsUpdate;
+	if(deviceUpdate != lastDeviceUpdate || force)
+		sendUpdate('sensor', deviceUpdate);
+	lastDeviceUpdate = deviceUpdate;
 
 	var actionsUpdate = "";
 	for(var a = 0; a < actions.outputs.length; a++){

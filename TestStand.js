@@ -20,4 +20,4 @@ server.init(settings, sequencer, devices, actions);
 sequencer.init(settings, devices, actions);
 actions.init(settings, sequencer, serial, logs["actions"]);
 devices.init(settings, sequencer, serial, logs["devices"]);
-serial.init(settings, devices.updateSensors);
+serial.init(settings, devices.updateDevices);

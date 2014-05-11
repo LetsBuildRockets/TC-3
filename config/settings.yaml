@@ -46,8 +46,12 @@ sequence:
  
 # Devices
 devices:
-   names:
-    0: "temp"
+    0:
+      name: "Temp"
+      unit: "deg C"
+    1:
+      name: "Kerosine Flow Rate"
+      unit: "L/min"
 
 # Outputs
 outputs:

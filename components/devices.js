@@ -1,48 +1,49 @@
-var sensors = new Array();
+var device = new Array();
 var settings;
 var sequencer;
 var serial;
 var logger;
-var devicesNames = new Array(11);
 
-exports.init = function init(newSettings, newSequencer, newSerial, newLogger){
+exports.init = function init(newSettings, newSequencer, newSerial, newLogger) {
 	logger = newLogger;
 	settings = newSettings;
 	serial = newSerial;
 	sequencer = newSequencer;
 
-	sensors[0] = 0;
-	sensors[1] = 5;
-	sensors[2] = 10;
-	sensors[3] = 15;
-	sensors[4] = 20;
-	sensors[5] = 25;
-	sensors[6] = 30;
-	sensors[7] = 35;
-	sensors[8] = 40;
-	sensors[9] = 45;
-	sensors[10] = 50;
+	for(var i in settings.devices)
+		//device.push([i, settings.devices[i]]);
+		device[i] = settings.devices[i];
 
-	for(var i = 0; i < sensors.length; i++)
-		devicesNames[i] = (settings.devices.names[i] ? settings.devices.names[i] : "NaN");
-	logger.logArray(sequencer.time(), devicesNames);
+	//init filler data
+	for(var i = 0; i < device.length; i++) {
+		device[i].value = i*5;
+	}
+	
+	logger.write(sequencer.time() + "," + extract(device, 'name'));
 
 	//Create Random Data
 	/*setInterval(function(){
-		for(var i = 0; i < sensors.length; i++)
-			sensors[i] = Math.round(Math.random()*50);
+		for(var i = 0; i < device.length; i++)
+			device[i].value = Math.round(Math.random()*50);
 	},1000);*/
 };
 
+function extract(array, object) {
+	var str = "";
+	for(var i = 0; i < array.length; i++)
+		str += (array[i][object]) + ",";
+	console.log(str);
+	return str;
+}
 
-exports.updateSensors = function (newSensors){
-	sensors[0] = newSensors[0];
+exports.updateDevice = function (newdevice) {
+	device[0] = newdevice[0].value;
 };
 
 exports.startCountdown = function() {
-	logDevices = setInterval(function(){
-		logger.logArray(sequencer.time(), sensors);
+	logDevices = setInterval(function() {
+		logger.logArray(sequencer.time(), device);
 	},100);
 };
 
-exports.sensors = sensors;
+exports.device = device;

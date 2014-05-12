@@ -11,14 +11,13 @@ exports.init = function init(newSettings, newSequencer, newSerial, newLogger) {
 	sequencer = newSequencer;
 
 	for(var i in settings.devices)
-		//device.push([i, settings.devices[i]]);
 		device[i] = settings.devices[i];
 
 	//init filler data
 	for(var i = 0; i < device.length; i++) {
 		device[i].value = i*5;
 	}
-	
+
 	logger.write(sequencer.time() + "," + extract(device, 'name'));
 
 	//Create Random Data
@@ -32,15 +31,28 @@ function extract(array, object) {
 	var str = "";
 	for(var i = 0; i < array.length; i++)
 		str += (array[i][object]) + ",";
-	console.log(str);
+	if(settings.debug) console.log(str);
 	return str;
 }
 
+function integrateDevices(){
+
+}
+
+function cacheDeviceData() {
+	for(var i = 0; i < device.length; i++) {
+		device[i].lastUpdate = sequencer.time();
+		device[i].lastValue = device[i].value;
+	}
+}
+
 exports.updateDevice = function (newdevice) {
+	cacheDeviceData();
 	device[0] = newdevice[0].value;
 };
 
 exports.startCountdown = function() {
+	cacheDeviceData();
 	logDevices = setInterval(function() {
 		logger.logArray(sequencer.time(), device);
 	},100);

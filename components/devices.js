@@ -36,7 +36,12 @@ function extract(array, object) {
 }
 
 function integrateDevices(){
-
+	for(var i = 0; i < device.length; i++) {
+		if(device[i].integrate) {
+			var itegrand = parseInt(device[i].integrate); 
+			device[i] = ((device[itegrand] + device[itegrand].lastValue) / 2) * (seq.time() - device[itegrand].lastUpdate);
+		}
+	}
 }
 
 function cacheDeviceData() {

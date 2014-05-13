@@ -1,5 +1,5 @@
 # Debug mode
-debug: 1 # true/false
+debug: 0 # true/false
 
 # Sequence Config
 sequence:
@@ -55,7 +55,7 @@ devices:
     2:
       name: "Kerosine Consumption"
       unit: "L"
-      itegrate: 1 # device 1
+      integrand: 1 # device 1
 
 # Outputs
 outputs:
@@ -79,7 +79,7 @@ log:
 
 # Server Settings
 server:
-  port: 80
+  port: 8000
   
 # I/O
 serial:

@@ -2,12 +2,12 @@ var serialportObject = require("serialport");
 var SerialPort = serialportObject.SerialPort;
 var serialPortExists = false;
 var serialPort;
-var update;
+var updateDevice;
 var settings;
 
 exports.init = function(newSettings, newUpdate) {
 	settings = newSettings;
-	update = newUpdate;
+	updateDevice = newUpdate;
 
 	serialPortExists = true;
 
@@ -25,10 +25,10 @@ exports.init = function(newSettings, newUpdate) {
 		if (settings.debug) console.log(settings.serial.port + ' opened');
 		serialPort.on('data', function(data) {
 			if (settings.debug) console.log('data received: ' + data);
-			if (update != undefined) {
+			if (updateDevice != undefined) {
 				var dataArray = new Array();
-				dataArray[0] = parseFloat(data.toString());
-				update(dataArray);
+				dataArray[0].value = parseFloat(data.toString());
+				updateDevice(dataArray);
 			}
 		});
 	});

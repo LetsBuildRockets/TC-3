@@ -273,7 +273,7 @@ socket.on('time', function (data) {
 		data = "+" + data;
 	}	document.getElementById('time').value = ('T'+data);
 });
-socket.on('sensor', function(data) {
+socket.on('device', function(data) {
 	while(data.length > 1){
 		var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
 		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));

@@ -53,10 +53,10 @@ var lastSequenceUpdate = "";
 function update(force) {
 	var deviceUpdate = "";
 	for(var s = 0; s < devices.device.length; s++){
-		deviceUpdate += s + ":" + devices.device[s] + "\n";
+		deviceUpdate += s + ":" + devices.device[s].value + "\n";
 	}
 	if(deviceUpdate != lastDeviceUpdate || force)
-		sendUpdate('sensor', deviceUpdate);
+		sendUpdate('device', deviceUpdate);
 	lastDeviceUpdate = deviceUpdate;
 
 	var actionsUpdate = "";

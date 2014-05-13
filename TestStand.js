@@ -16,6 +16,9 @@ var logger = require('./components/logger');
 logs["actions"] = new logger(settings, logsFolder, "actions");
 logs["devices"] = new logger(settings, logsFolder, "devices");
 
+if (port = process.argv.slice(2)[0]) // overide server port
+	settings.server.port = port;
+
 server.init(settings, sequencer, devices, actions);
 sequencer.init(settings, devices, actions);
 actions.init(settings, sequencer, serial, logs["actions"]);

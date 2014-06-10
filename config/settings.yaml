@@ -1,12 +1,14 @@
+# ***EXAMPLE***
+
 # Debug mode
 debug: 0 # true/false
 
 # Sequence Config
-sequence:
+sequence: # Commands in numerical order
   command0: 
-    time: -10
-    run: init
-    params: ''
+    time: -10  # in seconds
+    run: init  # function to call
+    params: '' # parameters to pass
   command1:
     time: -1
     run: ignitor
@@ -45,9 +47,17 @@ sequence:
     params: ''
  
 # Devices
-devices:
-   names:
-    0: "temp"
+devices: # Analog Inputs in Numberical Order
+    0:
+      name: "Temp"
+      unit: "deg C"      
+    1:
+      name: "Kerosine Flow Rate"
+      unit: "L/sec"      
+    2:
+      name: "Kerosine Consumption"
+      unit: "L"
+      integrand: 1 # device 1
 
 # Outputs
 outputs:

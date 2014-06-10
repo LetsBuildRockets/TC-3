@@ -242,6 +242,13 @@ window.onload = function(){
 					pointColor : "rgba(151,187,205,1)",
 					pointStrokeColor : "#fff",
 					data : []
+				},
+				{
+					fillColor : "rgba(0,0,0,0)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : []
 				}
 			]
 		}

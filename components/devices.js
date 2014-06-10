@@ -21,10 +21,10 @@ exports.init = function init(newSettings, newSequencer, newSerial, newLogger) {
 	logger.logArray(sequencer.time(), extract(device, 'name'));
 
 	//Create Random Data
-	/*setInterval(function(){
-		for(var i = 0; i < device.length; i++)
-			device[i].value = Math.round(Math.random()*50);
-	},1000);*/
+	setInterval(function(){
+		device[0].value = Math.round(Math.random()*10);
+		calculateSpecialDevices();
+	},1000);
 };
 
 function extract(array, object) {
@@ -55,30 +55,36 @@ function calculateSpecialDevices() {
 }
 
 function integrateDevices() {
+	var hrTime = process.hrtime();
+	time = (hrTime[0] + hrTime[1] / 1000000000);
 	for(var i = 0; i < device.length; i++) {
 		if(device[i].integrand) {
 			var integrand = parseInt(device[i].integrand);
-			if(!device[i].value) device[i].value = 0; //this is dumb...
-			device[i].value += (((device[integrand].value + device[integrand].lastValue) / 2) * (sequencer.time() - device[integrand].lastUpdate));
+			if(!device[i].value) device[i].value = 0; //TODO: this is dumb...
+			device[i].value += (((device[integrand].value + device[integrand].lastValue) / 2) * (time - device[i].lastUpdate));
 			if(settings.debug) console.log("integrand: " + integrand + " integral: " + device[i].value);
 		}
 	}
 }
 
 function derivateDevices() {
+	var hrTime = process.hrtime();
+	time = (hrTime[0] + hrTime[1] / 1000000000);
 	for(var i = 0; i < device.length; i++) {
-		if(device[i].integrand) {
-			var integrand = parseInt(device[i].integrand);
-			if(!device[i].value) device[i].value = 0; //this is dumb...
-			device[i].value += (((device[integrand].value + device[integrand].lastValue) / 2) * (sequencer.time() - device[integrand].lastUpdate));
-			if(settings.debug) console.log("integrand: " + integrand + " integtal: " + device[i].value);
+		if(device[i].derivativeOf) {
+			var derivativeOf = parseInt(device[i].derivativeOf);
+			if(!device[i].value) device[i].value = 0; //TODO: this is dumb...
+			device[i].value = ((device[derivativeOf].value - device[derivativeOf].lastValue) / (time - device[i].lastUpdate));
+			if(settings.debug)	console.log("derivativeOf: " + derivativeOf + " derivative: " + device[i].value);
 		}
 	}
 }
 
 function cacheDeviceData() {
+	var hrTime = process.hrtime();
+	time = (hrTime[0] + hrTime[1] / 1000000000);
 	for(var i = 0; i < device.length; i++) {
-		device[i].lastUpdate = sequencer.time();
+		device[i].lastUpdate = time;
 		device[i].lastValue = device[i].value;
 	}
 }

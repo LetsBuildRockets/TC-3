@@ -1,6 +1,7 @@
 int clockPin = 11;
 int dataPin = 12;
 int dataPin2 = 10;
+int latchPin = 9;
 
 boolean output[16] = { };
 boolean stringComplete = false;
@@ -13,13 +14,14 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   pinMode(dataPin2, OUTPUT);
   pinMode(clockPin, OUTPUT);
+  pinMode(latch, OUTPUT);   
   
   command.reserve(200);
   
   for (int i = 0; i <= sizeof(output); i++) {
     output[i] = 0;
   }  
-  shiftDataOut(dataPin, clockPin, output);
+  shiftDataOut(dataPin, output);
   
   
   Serial.println("initialized");
@@ -76,10 +78,10 @@ void serialEvent() {
      
 void updateShiftRegister(int address, boolean state) {
   output[address] = state;
-  shiftDataOut(dataPin, clockPin, output);
+  shiftDataOut(dataPin, output);
 }
  
-void shiftDataOut(uint8_t dataPin, uint8_t clockPin, boolean output[]) {
+void shiftDataOut(uint8_t dataPin, boolean output[]) {
   int i;
   for (i = 7; i >= 0; i--)  {
     digitalWrite(dataPin, output[i]);
@@ -87,4 +89,6 @@ void shiftDataOut(uint8_t dataPin, uint8_t clockPin, boolean output[]) {
     digitalWrite(clockPin, HIGH);
     digitalWrite(clockPin, LOW);
   }
+    digitalWrite(latch, HIGH);
+    digitalWrite(latch,LOW);
 }

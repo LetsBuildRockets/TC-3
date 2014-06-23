@@ -14,7 +14,7 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   pinMode(dataPin2, OUTPUT);
   pinMode(clockPin, OUTPUT);
-  pinMode(latch, OUTPUT);   
+  pinMode(latchPin, OUTPUT);   
   
   command.reserve(200);
   
@@ -38,7 +38,7 @@ void loop() {
     updateShiftRegister(outputs);
     delay(10);
   }*/
-  Serial.println(analogRead(0));
+  //Serial.println(analogRead(0));
   delay(100);
 }
 
@@ -89,6 +89,6 @@ void shiftDataOut(uint8_t dataPin, boolean output[]) {
     digitalWrite(clockPin, HIGH);
     digitalWrite(clockPin, LOW);
   }
-    digitalWrite(latch, HIGH);
-    digitalWrite(latch,LOW);
+    digitalWrite(latchPin, HIGH);
+    digitalWrite(latchPin,LOW);
 }

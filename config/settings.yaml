@@ -42,7 +42,7 @@ sequence: # Commands in numerical order
     run: oxyValve
     params: true
   command9: 
-    time: 10
+    time: 5
     run: end
     params: ''
  

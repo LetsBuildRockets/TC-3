@@ -24,12 +24,13 @@ exports.startCountdown = function(){
 
 exports.ignitor = function ignitor(state){
 	var address = this.settings.outputs.ignitor;
-	if(state)
+	/*if(state)
 		ignitorInterval = this.serial.pulse(address, 100);
 	else {
 		clearInterval(ignitorInterval);
 		this.serial.write(address, false);
-	}
+	}*/
+	this.serial.write(address, state);
 	this.outputs[address] = state;
 	this.logger.logArray(this.sequencer.time(), outputs, true);
 };

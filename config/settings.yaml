@@ -9,40 +9,24 @@ sequence: # Commands in numerical order
     time: -10  # in seconds
     run: init  # function to call
     params: '' # parameters to pass
-  command1:
-    time: -1
-    run: ignitor
-    params: true
-  command2: 
+  command1: 
     time: -0.5
-    run: ignitorFuelValve
-    params: true
-  command3: 
-    time: -0.2
-    run: ignitorOxyValve
-    params: true
-  command4: 
-    time: 0
     run: fuelValve
     params: true
-  command5: 
-    time: 0.1
+  command2:
+    time: 0
+    run: ignitor
+    params: true
+  command3: 
+    time: 0.5
     run: ignitor
     params: false
-  command6: 
-    time: 0.1
-    run: ignitorOxyValve
-    params: false
-  command7: 
-    time: 0.3
-    run: ignitorFuelValve
-    params: false
-  command8: 
+  command4: 
     time: 0.5
     run: oxyValve
     params: true
-  command9: 
-    time: 5
+  command5: 
+    time: 5.5
     run: end
     params: ''
  
@@ -57,7 +41,7 @@ devices: # Analog Inputs in Numberical Order
     2:
       name: "Kerosine Consumption"
       unit: "L"
-      integrand: "0" # device 0
+      integrand: "1" # device 1
     3:
       name: "Temp Change"
       unit: "deg C/sec"
@@ -66,16 +50,12 @@ devices: # Analog Inputs in Numberical Order
 # Outputs
 outputs:
   ignitor: 0
-  ignitorFuelValve: 1
-  ignitorOxyValve: 2
-  fuelValve: 3
-  oxyValve: 4
+  fuelValve: 1
+  oxyValve: 2
   names:
     0: "Ignitor"
-    1: "Ignitor Fuel Valve"
-    2: "Ignitor Oxygen Valve"
-    3: "Main Fuel Valve"
-    4: "Main Oxygen Valve"
+    1: "Main Fuel Valve"
+    2: "Main Oxygen Valve"
 
 # Data log
 log:

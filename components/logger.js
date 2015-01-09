@@ -7,6 +7,7 @@ var stream = null;
 function Logger(settings, logsFolder, fileName) {
 	var date = new Date();
 	var name = logsFolder + "/" + fileName + (settings.log.appendDate ? " " + date.getFullYear() + " " + date.getMonth() + " " + date.getDay() + "  " + date.getHours() + " " + date.getMinutes() + " " + date.getSeconds() : "") + (settings.log.extension ? settings.log.extension : "");
+	console.log(name);
 	this.fs = require('fs');
 	if (!fs.existsSync(name)) 
 		this.stream = this.fs.createWriteStream(name);

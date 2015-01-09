@@ -17,15 +17,15 @@ exports.init = function init(newSettings, newSequencer, newDevices, newActions){
 app.use(express.static('./components/web/'));
 
 app.get('/', function (req, res) {
-	res.sendfile('./components/web/index.html');
+	res.sendFile('./components/web/index.html');
 });
 
 app.get('/control', function (req, res) {
-	res.sendfile('./components/web/control.html');
+	res.sendFile('./components/web/control.html');
 });
 
 app.get('/estop', function (req, res) {
-	res.sendfile('./components/web/estop.html');
+	res.sendFile('./components/web/estop.html');
 });
 
 io.sockets.on('connection', function (socket) {

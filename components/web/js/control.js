@@ -283,7 +283,8 @@ socket.on('time', function (data) {
 socket.on('device', function(data) {
 	while(data.length > 1){
 		var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
-		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));
+		var state = Math.round(100*parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n'))))/100;
+		console.log(state);
 		data = data.substring(data.indexOf('\n') + 1, data.length);
 		if(lineChartData.datasets[id])
 			lineChartData.datasets[id].data[chartIndex] = state;

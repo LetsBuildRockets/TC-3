@@ -46,6 +46,16 @@ io.sockets.on('connection', function (socket) {
 	}, 500);
 });
 
+function listDevices() {
+  // TODO: read settings file
+  // TODO: send list of devices
+}
+
+function listActions() {
+  // TODO: read settings file
+  // TODO: return list of actions
+}
+
 var lastDeviceUpdate = "";
 var lastActionsUpdate = "";
 var lastTimeUpdate = "";

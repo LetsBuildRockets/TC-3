@@ -15,7 +15,8 @@
     "socket.io": ">= 0.9.16",
     "express": ">= 3.0",
     "js-yaml": ">= 3.0",
-    "serialport": ">= 1.4"
+    "serialport": ">= 1.4",
+    "i2c": "*"
   },
   "engines": {
     "node": ">= 0.10"

@@ -3,6 +3,7 @@ var lights = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 var lineChartData = new Object();
 var chart = new Object();
 var time = 0, chartIndex = 0;
+var running = false;
 
 window.onload = function(){
 	if(document.getElementById('g0'))
@@ -261,15 +262,15 @@ window.onload = function(){
 
 var socket = io.connect(location.host);
 socket.on('serverStatus', function (data) {
-	console.log(data);
+	//console.log(data);
 	displayStatus(data);
 });
 socket.on('sequenceState', function (data) {
 	console.log(data);
 	if(data == 'initialized')
-		document.bgColor="white";
+		running = true;
 	if(data == 'stop')
-		document.bgColor="white";
+		running = false;
 	displayStatus(data);
 });
 socket.on('time', function (data) {
@@ -284,14 +285,15 @@ socket.on('device', function(data) {
 	while(data.length > 1){
 		var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
 		var state = Math.round(100*parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n'))))/100;
-		console.log(state);
+		//console.log(state);
 		data = data.substring(data.indexOf('\n') + 1, data.length);
-		if(lineChartData.datasets[id])
+		if(lineChartData.datasets[id] && running)
 			lineChartData.datasets[id].data[chartIndex] = state;
 		if(gauge[id])
 			gauge[id].refresh(state);
 	}
-	updateChart();
+	if(running)
+    updateChart();
 });
 socket.on('action', function(data) {
 	while(data.length > 1){

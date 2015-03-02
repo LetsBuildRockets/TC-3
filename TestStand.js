@@ -8,6 +8,7 @@ var serial = require('./components/serial');
 var settings = yaml.safeLoad(fs.readFileSync('./config/settings.yaml', 'ascii'));
 
 var date = new Date();
+
 var logsFolder = settings.log.folder + date.getFullYear() + " " + date.getMonth() + " " + date.getDay() + "  " + date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
 if(!fs.existsSync(settings.log.folder)) fs.mkdir(settings.log.folder);
 fs.mkdir(logsFolder);
@@ -17,7 +18,7 @@ var logger = require('./components/logger');
 logs["actions"] = new logger(settings, logsFolder, "actions");
 logs["devices"] = new logger(settings, logsFolder, "devices");
 
-if (port = process.argv.slice(2)[0]) // overide server port
+if (port = process.argv.slice(2)[0]) // override server port
 	settings.server.port = port;
 
 server.init(settings, sequencer, devices, actions);

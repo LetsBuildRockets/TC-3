@@ -3,11 +3,6 @@
 
 #include "Arduino.h"
 
-template <typename T> unsigned int I2C_writeAnything (const T& value) {
-  return  Wire.write((byte *) &value, sizeof (value));
-}  
-
-
 class I2C {
 public:
   I2C();

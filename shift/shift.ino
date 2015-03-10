@@ -18,7 +18,7 @@ void setup() {
   
   command.reserve(200);
   
-  for (int i = 0; i <= sizeof(output); i++) {
+  for (int i = 0; i <= sizeof(output)/sizeof(boolean); i++) {
     output[i] = 0;
   }  
   shiftDataOut(dataPin, output);

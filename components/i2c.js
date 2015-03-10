@@ -1,4 +1,4 @@
-var serialportObject = require("serialport");
+var i2c require('i2c');
 var SerialPort = serialportObject.SerialPort;
 var serialPortExists = false;
 var serialPort;
@@ -12,7 +12,7 @@ exports.init = function(newSettings, newUpdate) {
 	serialPortExists = true;
 
 	serialPort = new SerialPort(settings.serial.port, {
-		baudrate: settings.serial.baudrate,
+		baudrate: settings.serial.baudratels
 		parser: serialportObject.parsers.readline("\n")
 	}, false);
 

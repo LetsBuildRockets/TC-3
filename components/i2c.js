@@ -1,7 +1,6 @@
-var i2c require('i2c');
-var SerialPort = serialportObject.SerialPort;
-var serialPortExists = false;
-var serialPort;
+var i2c = require('i2c');
+var address = 0x18;
+var wire = new i2c(address, {device: '/dev/i2c-1'});
 var updateDevice;
 var settings;
 
@@ -9,36 +8,17 @@ exports.init = function(newSettings, newUpdate) {
 	settings = newSettings;
 	updateDevice = newUpdate;
 
-	serialPortExists = true;
-
-	serialPort = new SerialPort(settings.serial.port, {
-		baudrate: settings.serial.baudratels
-		parser: serialportObject.parsers.readline("\n")
-	}, false);
-
-	serialPort.on('error', function(err){
-		console.log("error: " + err);
-		serialPortExists = false;
-	});
-
-	serialPort.open(function() {
-		if (settings.debug) console.log(settings.serial.port + ' opened');
-		serialPort.on('data', function(data) {
-			if (settings.debug) console.log('data received: ' + data);
-			if (updateDevice != undefined) {
-				var dataArray = new Array();
-				dataArray[0].value = parseFloat(data.toString());
-				updateDevice(dataArray);
-			}
-		});
-	});
 };
 
+exports.scan  = function () {
+  wire.scan(function(err, data) {
+    if(err) console.log(data);
+    console.log(data);  
+  });
+};
 
 exports.write = function (address, state) {
-	if (serialPortExists)
-		serialPort.write(address + ":" + (state ? 1 : 0) + "\n");
-	if (settings.debug) console.log("serial write: " + address + ":" + state);
+  // TODO: plain write
 };
 
 var lastPulse = false;
@@ -50,7 +30,7 @@ exports.pulse = function(address, wavelength){
 	return interval;
 };
 
-//test code via arg -test
+// test code via arg -test
 if (process.argv.slice(2)[0] == '-test') {
 	exports.init({serial: {port: process.argv.slice(2)[1], baudrate: 9600}});
 

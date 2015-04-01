@@ -6,6 +6,15 @@ var time = 0, chartIndex = 0;
 var running = false;
 
 window.onload = function(){
+  var identifiers = location.href.split("?=");
+  if(identifiers[identifiers.length-1] == "control") {
+    document.getElementById("run").style.visibility = "visible";
+    document.getElementById("stop").style.visibility = "visible";
+  } else {
+    document.getElementById("run").style.visibility = "hidden";
+    document.getElementById("stop").style.visibility = "hidden";
+  }
+  
 	if(document.getElementById('g0'))
 		gauge[0] = new JustGage({
 			id: "g0", 
@@ -347,4 +356,28 @@ function updateLights(){
 		context.strokeStyle = 'black';//'#003300';
 		context.stroke();
 	}
+}
+
+function run() {
+    socket.emit('controlState', 'initiate');
+}
+function stop() {
+    socket.emit('controlState', 'stop');
+	document.getElementById('time').value = "";
+}
+
+function clearStatus() {
+    document.getElementById('status').value = "";
+}
+
+function displayStatus(data){
+	document.getElementById('status').value = document.getElementById('status').value + data + '\n';
+	document.getElementById('status').scrollTop = document.getElementById('status').scrollHeight;
+}
+
+document.onkeydown = function(evt){    
+   var key = evt.keyCode;
+   if(key == 27) {
+     stop();
+   }
 }

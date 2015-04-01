@@ -20,10 +20,6 @@ app.get('/', function (req, res) {
 	res.sendFile('./components/web/index.html');
 });
 
-app.get('/control', function (req, res) {
-	res.sendFile('./components/web/control.html');
-});
-
 app.get('/estop', function (req, res) {
 	res.sendFile('./components/web/estop.html');
 });

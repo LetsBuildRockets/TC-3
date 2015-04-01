@@ -51,7 +51,7 @@ sequence.init = function sequenceInit(settings, params){
 	sequenceInitTime = (hrTime[0] + hrTime[1] / 1000000000);
 	actions.startCountdown();
 	devices.startCountdown();
-	sequenceState = "sequencer initialized";
+	sequenceState = "initialized";
 };
 
 sequence.ignitor = function sequenceIgnitor(settings, state){

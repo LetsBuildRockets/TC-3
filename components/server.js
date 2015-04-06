@@ -17,11 +17,11 @@ exports.init = function init(newSettings, newSequencer, newDevices, newActions){
 app.use(express.static('./components/web/'));
 
 app.get('/', function (req, res) {
-	res.sendFile('./components/web/index.html');
+	res.sendFile(__dirname +  '/web/index.html');
 });
 
 app.get('/estop', function (req, res) {
-	res.sendFile('./components/web/estop.html');
+	res.sendFile(__dirname +  '/web/estop.html');
 });
 
 io.sockets.on('connection', function (socket) {

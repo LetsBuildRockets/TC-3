@@ -30,11 +30,11 @@ void serialEvent (Serial myPort) {
   // get the ASCII string:
   String inString[] = myPort.readStringUntil('\n').trim().split(":");
   if (inString != null) {
-    // trim off any whitespace:
-    println(inString);
     int iden = int(inString[0]);
-    float value = float(inString[1])*1.5;
-    value = map(value, 0, 1023, 0, height);
+    float value = float(inString[1]);
+    if(iden == 1) 
+    println((value-1.25)/.005);
+    value = map(value, 0, 5, 0, height);
     // draw the line:
     if(iden == 0) stroke(100, 20, 220, 100);
     if(iden == 1) stroke(20, 20, 220, 100);

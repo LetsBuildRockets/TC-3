@@ -4,11 +4,14 @@
 // TODO: d latch
 
 #include <Wire.h>
+#include "I2C.h"
 
-#define I2C_ADDR = 0x40
+const int I2C_ADDR = 0x40;
+
+I2C i2c;
 
 void setup() {
-  
+  i2c.begin(I2C_ADDR);
   
 }
 

@@ -6,8 +6,8 @@
 class I2C {
 public:
   I2C();
+  byte* refresh();
   void begin(byte _address);
-  void sendScore(int newScore);
   static void requestEvent();
   static void recieveEvent(int _length);
 };

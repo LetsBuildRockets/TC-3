@@ -1,7 +1,7 @@
 int clockPin = 11;
 int dataPin = 12;
 int dataPin2 = 10;
-int latchPin = 9;
+int latchPin = 5;
 
 boolean output[16] = { };
 boolean stringComplete = false;

@@ -10,7 +10,7 @@ sequence: # Commands in numerical order
     run: init  # function to call
     params: '' # parameters to pass
   command1:
-    time: -5
+    time: -6
     run: heliumValve
     params: true
   command2: 
@@ -18,11 +18,11 @@ sequence: # Commands in numerical order
     run: fuelValve
     params: true
   command3: 
-    time: 3
+    time: 7
     run: oxyValve
     params: true
   command4: 
-    time: 5
+    time: 12
     run: end
     params: ''
  

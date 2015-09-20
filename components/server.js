@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/control', function (req, res) {
-	res.sendfile('./components/web/control.html');
+	res.sendfile('./components/web/index.html');
 });
 
 app.get('/estop', function (req, res) {

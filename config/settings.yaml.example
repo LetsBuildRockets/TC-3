@@ -1,4 +1,4 @@
-# ***MAKER FAIRE***
+# ***EXAMPLE***
 
 # Debug mode
 debug: 0 # true/false
@@ -10,18 +10,38 @@ sequence: # Commands in numerical order
     run: init  # function to call
     params: '' # parameters to pass
   command1:
-    time: -5
-    run: heliumValve
+    time: -1
+    run: ignitor
     params: true
   command2: 
+    time: -0.5
+    run: ignitorFuelValve
+    params: true
+  command3: 
+    time: -0.2
+    run: ignitorOxyValve
+    params: true
+  command4: 
     time: 0
     run: fuelValve
     params: true
-  command3: 
-    time: 3
+  command5: 
+    time: 0.1
+    run: ignitor
+    params: false
+  command6: 
+    time: 0.1
+    run: ignitorOxyValve
+    params: false
+  command7: 
+    time: 0.3
+    run: ignitorFuelValve
+    params: false
+  command8: 
+    time: 0.5
     run: oxyValve
     params: true
-  command4: 
+  command9: 
     time: 5
     run: end
     params: ''
@@ -45,7 +65,6 @@ devices: # Analog Inputs in Numberical Order
 
 # Outputs
 outputs:
-  heliumValve: 0
   ignitor: 0
   ignitorFuelValve: 1
   ignitorOxyValve: 2

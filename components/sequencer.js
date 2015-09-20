@@ -74,6 +74,11 @@ sequence.fuelValve = function sequencefuelValve(settings, state){
 	actions.fuelValve(state);
 };
 
+sequence.heliumValve = function sequenceHeliumValve(settings, state){
+	sequenceState = "heliumValve " + state;
+	actions.heliumValve(state);
+};
+
 sequence.oxyValve = function sequenceOxyValve(settings, state){
 	sequenceState = "oxyValve " + state;
 	actions.oxyValve(state);

@@ -42,6 +42,13 @@ exports.ignitorFuelValve = function ignitorFuelValve(state){
 	this.logger.logArray(this.sequencer.time(), outputs, true);
 };
 
+exports.heliumValve = function heliumValve(state) {
+	var address = this.settings.outputs.heliumValve;
+	this.serial.write(address, state);
+	outputs[address] = state;
+	this.logger.logArray(this.sequencer.time(), outputs, true)
+};
+
 exports.ignitorOxyValve = function ignitorOxylValve(state){
 	var address = this.settings.outputs.ignitorOxyValve;
 	this.serial.write(address, state);

@@ -37,7 +37,6 @@ devices: # Analog Inputs in Numberical Order
     2:
       name: "Kerosine Consumption"
       unit: "L"
-      integrand: "0" # device 0
     3:
       name: "Temp Change"
       unit: "deg C/sec"

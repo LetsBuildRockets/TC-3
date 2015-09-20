@@ -2,7 +2,8 @@ var gauge = new Array();
 var lights = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 var lineChartData = new Object();
 var chart = new Object();
-var time = 0, chartIndex = 0;
+var time = 0;
+var startTime = (new Date()).getTime();
 
 window.onload = function(){
 	if(document.getElementById('g0'))
@@ -278,15 +279,18 @@ socket.on('time', function (data) {
 		gauge[0].refresh(parseFloat(data));
 	if(data >= 0) {
 		data = "+" + data;
-	}	document.getElementById('time').value = ('T'+data);
+	}
+  document.getElementById('time').value = ('T'+data);
 });
 socket.on('device', function(data) {
 	while(data.length > 1){
 		var id = parseInt(data.substring(0, data.indexOf(':'))) + 1;
-		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n')));
+		var state = parseFloat(data.substring(data.indexOf(':') + 1, data.indexOf('\n'))).toFixed(2);
 		data = data.substring(data.indexOf('\n') + 1, data.length);
-		if(lineChartData.datasets[id])
-			lineChartData.datasets[id].data[chartIndex] = state;
+		if(lineChartData.datasets[id]) {
+      lineChartData.datasets[id].data.shift()
+			lineChartData.datasets[id].data[10] = state;
+    }
 		if(gauge[id])
 			gauge[id].refresh(state);
 	}
@@ -320,8 +324,9 @@ function displayStatus(data){
 }
 
 function updateChart(){	
-	lineChartData.labels[chartIndex] = time;	
-	chartIndex++;	
+  lineChartData.labels.shift();
+  var elapsed = Math.round((new Date().getTime() - startTime)/1000);
+	lineChartData.labels[10] = elapsed + ',  ' + document.getElementById('time').value;	
 	chart.Line(lineChartData, {animation: false});
 }
 

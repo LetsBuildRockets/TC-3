@@ -5,7 +5,18 @@ var chart = new Object();
 var time = 0;
 var startTime = (new Date()).getTime();
 
+var identifiers = location.href.split("/");
+  
 window.onload = function(){
+  if(identifiers[identifiers.length-1] == "control") {
+    document.getElementById("run").style.visibility = "visible";
+    document.getElementById("stop").style.visibility = "visible";
+  } else {
+    document.getElementById("run").style.visibility = "hidden";
+    document.getElementById("stop").style.visibility = "hidden";
+  }
+  
+  
 	if(document.getElementById('g0'))
 		gauge[0] = new JustGage({
 			id: "g0", 
@@ -307,10 +318,10 @@ socket.on('action', function(data) {
 });
 
 function run() {
-    socket.emit('controlState', 'initiate');
+  socket.emit('controlState', 'initiate');
 }
 function stop() {
-    socket.emit('controlState', 'stop');
+  socket.emit('controlState', 'stop');
 	document.getElementById('time').value = "";
 }
 
@@ -349,4 +360,16 @@ function updateLights(){
 		context.strokeStyle = 'black';//'#003300';
 		context.stroke();
 	}
+}
+
+document.onkeydown = function(evt){    
+   var key = evt.keyCode;
+   if(identifiers[identifiers.length-1] == "control") {
+     if(key == 27) {
+       stop();
+     }
+     if(key == 13) {
+       run();
+     }
+   }
 }

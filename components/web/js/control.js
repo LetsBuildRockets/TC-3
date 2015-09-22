@@ -368,7 +368,7 @@ document.onkeydown = function(evt){
      if(key == 27) {
        stop();
      }
-     if(key == 13) {
+     if(key == 113) {
        run();
      }
    }

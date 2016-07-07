@@ -1,0 +1,50 @@
+<html>
+<head>
+
+</head>
+<body>
+
+
+</body>	
+<script type="text/javascript">
+function setheight(index, h) {
+	var bar = document.getElementById("bar"+index);
+	var fill = bar.getElementsByClassName("fill")[0];
+	var stroke = bar.getElementsByClassName("stroke")[0];
+	var maxHeight = bar.getAttribute("height")-stroke.style["stroke-width"];
+	h = h * maxHeight;
+	fill.setAttribute("y", maxHeight-h+stroke.style["stroke-width"]/2);
+	fill.setAttribute("height", h);
+}
+function getBar(index) {
+	var height = 100;
+	var strokeWeight = 5;
+	var width = 20;
+	var svgns = "http://www.w3.org/2000/svg";
+	var svgDocument = document.createElementNS("http://www.w3.org/2000/svg","svg");
+	svgDocument.setAttributeNS(null,"width",width+strokeWeight);
+	svgDocument.setAttributeNS(null,"height",height+strokeWeight);
+	svgDocument.setAttributeNS(null,"id","bar"+index);
+	var border = document.createElementNS(svgns, "rect");
+	border.setAttributeNS(null, "class", "stroke");
+	border.setAttributeNS(null, "x", 0);
+	border.setAttributeNS(null, "y", 0);
+	border.setAttributeNS(null, "height",  height+strokeWeight);
+	border.setAttributeNS(null, "width", width+strokeWeight); 
+	border.setAttributeNS(null, "style", "stroke: #000000; fill: none; stroke-width: " + strokeWeight);
+	svgDocument.appendChild(border);
+	var fill = document.createElementNS(svgns, "rect");
+	fill.setAttributeNS(null, "class", "fill");
+	fill.setAttributeNS(null, "x", strokeWeight/2);
+	fill.setAttributeNS(null, "y", 0);
+	fill.setAttributeNS(null, "height",  0);
+	fill.setAttributeNS(null, "width", width); 
+	fill.setAttributeNS(null, "style", "stroke: none; fill: purple;");
+	svgDocument.appendChild(fill);
+	return svgDocument;
+}
+for(var i = 0; i < 10; i++){
+	document.body.appendChild(getBar(i));
+}
+</script>
+</html>

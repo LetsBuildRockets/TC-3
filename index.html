@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style>
+		.measureFlex {
+			display: flex;
+			justify-content: space-around;
+		}
+		.measureFlex > * {
+			flex: auto;
+		}
+		.vertf {
+			flex-direction: column;
+		}
+		.horzf {
+			flex-direction: row;
+		}
+	</style>
+</head>
+<body>
+	<div class="vertf measureFlex">
+		<div class="horzf measureFlex">
+			<div class="measureBarContainer">
+				<div class="measureBar"></div>
+				<div class="measureInfo"></div>
+			</div>
+		</div>
+		<div class="horzf measureFlex">
+			<div class="measureIndicatorButtonContainer">
+				<div class="measureIndicatorButton"></div>
+				<div class="measureInfo"></div>
+			</div>
+			<div class="measureButtonContainer">
+				<div class="measureButton"></div>
+				<div class="measureInfo"></div>
+			</div>
+		</div>
+		<div class="horzf measureFlex">
+			<div class="graphContainer"></div>
+			<div class="sequenceContainer"></div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,8 +1,4 @@
 DAQ: DAQ.cpp DAQ.h
-	g++ DAQ.cpp -o DAQ -std=c++11 -lpci_dask
-
-flags:
-	g++ -g -dM -E - < /dev/null
-
+	gcc DAQ.cpp -o DAQ -lpci_dask
 clean:
 	rm asdf

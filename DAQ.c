@@ -8,7 +8,9 @@
 #include <String.h>
 #include "dask.h"
 #include "conio.h"
-#include "TransferFucntions.h"
+
+#include "TransferFunctions.h"
+
 #define Max_Chan 4
 I16 card, err;
 

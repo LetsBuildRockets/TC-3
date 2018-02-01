@@ -1,4 +1,7 @@
 #include  "TransferFunctions.h"
+TransferFunctions::TransferFunctions() {
+  fp = new FunctionParser();
+}
 
 TransferFunctions::addFunction(std::string funcText) {
       fp.Parse("x+1", "x");

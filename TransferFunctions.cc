@@ -1,13 +1,10 @@
 #include  "TransferFunctions.h"
-TransferFunctions::TransferFunctions() {
-  fp = new FunctionParser();
-}
 
-TransferFunctions::addFunction(std::string funcText) {
+void TransferFunctions::addFunction(std::string funcText) {
       fp.Parse("x+1", "x");
 }
 
-TransferFunctions::callFunction(double data) {
+double TransferFunctions::callFunction(double data) {
   double variables[1] = { data };
   return fp.Eval(variables);
 }

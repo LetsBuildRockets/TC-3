@@ -3,7 +3,6 @@
 
 class TransferFunctions {
   public:
-    TransferFunctions();
     void addFunction(std::string);
     double callFunction(double);
   private:

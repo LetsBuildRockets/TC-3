@@ -20,7 +20,7 @@ int main( void )
 
 
     int i;
-    I16 range=AD_B_5_V;
+    I16 range=AD_U_10_V;
     U16 chan_data[Max_Chan];
     F64 chan_voltage[Max_Chan];
 

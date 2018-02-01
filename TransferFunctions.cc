@@ -1,10 +1,6 @@
-#include  "fparser4.5.2/TransferFunctions.h"
-TransferFunctions::TransferFunctions() {
-  fp.AddConstant("pi", 3.14159265358979323846);
-  fp.ddConstant("e", 2.71828182845904523536);
-}
+#include  "TransferFunctions.h"
 
-TransferFunctions::addFunction(std::String funcText) {
+TransferFunctions::addFunction(std::string funcText) {
       fp.Parse("x+1", "x");
 }
 

@@ -1,7 +1,7 @@
 #include  "TransferFunctions.h"
 
 void TransferFunctions::addFunction(std::string funcText) {
-      fp.Parse("x+1", "x");
+      fp.Parse(funcText, "x");
 }
 
 double TransferFunctions::callFunction(double data) {

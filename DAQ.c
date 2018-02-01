@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <String.h>
 #include "dask.h"
 #include "conio.h"
+#include "TransferFucntions.h"
 #define Max_Chan 4
 I16 card, err;
 
@@ -16,8 +18,11 @@ void my_handler(int s){
     exit(1);
 }
 
-int main( void )
-{
+int main( void ) {
+  TransferFunctions funcs();
+  func.addFunction("asdf");
+  func.callFunction(2);
+
     struct sigaction sigIntHandler;
 
     sigIntHandler.sa_handler = my_handler;

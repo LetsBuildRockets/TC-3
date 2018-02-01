@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include <String.h>
+#include <string.h>
 #include "dask.h"
 #include "conio.h"
 
@@ -21,7 +21,7 @@ void my_handler(int s){
 }
 
 int main( void ) {
-  TransferFunctions funcs();
+  TransferFunctions func;
   func.addFunction("asdf");
   func.callFunction(2);
 

@@ -23,7 +23,6 @@ void my_handler(int s){
 int main( void ) {
   TransferFunctions func;
   func.addFunction("asdf");
-  func.callFunction(2);
 
     struct sigaction sigIntHandler;
 
@@ -60,6 +59,7 @@ int main( void ) {
         printf("                Ch0        Ch1        Ch2        Ch3\n");
         printf(" input value :  %04x       %04x       %04x       %04x\n", chan_data[0], chan_data[1], chan_data[2], chan_data[3]);
         printf("     voltage :  %.2f      %.2f      %.2f      %.2f\n\n", chan_voltage[0], chan_voltage[1], chan_voltage[2], chan_voltage[3]);
+        printf("     doublev :  %.2f      %.2f      %.2f      %.2f\n\n", func.callFunction(chan_voltage[0]), chan_voltage[1], chan_voltage[2], chan_voltage[3]);
         printf("\n\n\n\n\n                                       press Enter to stop \n");
 
         usleep( 50000 );

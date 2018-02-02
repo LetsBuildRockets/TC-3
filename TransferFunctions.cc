@@ -1,6 +1,6 @@
 #include  "TransferFunctions.h"
 
-void TransferFunctions::addFunction(std::string funcText) {
+void TransferFunctions::setFunction(std::string funcText) {
       fp.Parse(funcText, "x");
 }
 

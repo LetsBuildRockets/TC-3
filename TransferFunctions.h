@@ -3,7 +3,7 @@
 
 class TransferFunctions {
   public:
-    void addFunction(std::string);
+    void setFunction(std::string);
     double callFunction(double);
   private:
     FunctionParser fp;

@@ -11,7 +11,7 @@
 
 #include "TransferFunctions.h"
 
-#define MAX_CHAN 4
+#define MAX_CHAN 32
 I16 card, err;
 
 void my_handler(int s){
@@ -46,7 +46,6 @@ int main( void ) {
         printf("Register_Card error=%d\n", card);
         exit(1);
     }
-
     do{
         clrscr();
         printf("*****************************************************************\n" );
@@ -56,14 +55,15 @@ int main( void ) {
         for( i=0 ; i<MAX_CHAN; i++ ){
             if( (err = AI_ReadChannel(card, i, range, &chan_data[i]) ) != NoError )
                 printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
-            AI_VoltScale(card, range, chan_data[i], &chan_voltage[i]);
-            chan_data[i] = chan_data[i] & 0x0ff;
-        }
-        printf("                Ch0        Ch1        Ch2        Ch3\n");
-        printf(" input value :  %04x       %04x       %04x       %04x\n", chan_data[0], chan_data[1], chan_data[2], chan_data[3]);
-        printf("     voltage :  %.2f      %.2f      %.2f      %.2f\n", chan_voltage[0], chan_voltage[1], chan_voltage[2], chan_voltage[3]);
-        printf("     scaledv :  %.2f      %.2f      %.2f      %.2f\n\n", func[0].callFunction(chan_voltage[0]), func[1].callFunction(chan_voltage[1]), func[2].callFunction(chan_voltage[2]), func[3].callFunction(chan_voltage[3]));
-        printf("\n\n\n\n\n                                       press Enter to stop \n");
+        	//AI_VoltScale(card, range, chan_data[i], &chan_voltage[i]);
+	        AI_VReadChannel(card, i, range, &chan_voltage[i]);
+		//chan_data[i] = chan_data[i] & 0x0ff;
+       }
+        printf("                Ch0        Ch1        Ch2        Ch3        Ch4\n");
+        printf(" input value :  %04x       %04x       %04x       %04x       %04x\n", chan_data[0], chan_data[1], chan_data[2], chan_data[3], chan_data[4]);
+        printf("     voltage :  %.2f       %.2f       %.2f       %.2f       %.2f\n", chan_voltage[0], chan_voltage[1], chan_voltage[2], chan_voltage[3], chan_voltage[4]);
+        printf("     scaledv :  %.2f       %.2f       %.2f       %.2f       %.2f\n\n", func[0].callFunction(chan_voltage[0]), func[1].callFunction(chan_voltage[1]), func[2].callFunction(chan_voltage[2]), func[3].callFunction(chan_voltage[3]), chan_voltage[4]);
+        printf("\n\n\n\n\n                                       press ^C to stop \n");
 
         usleep( 50000 );
     }while(1);

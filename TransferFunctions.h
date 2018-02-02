@@ -2,9 +2,9 @@
 #include <string>
 
 class TransferFunctions {
-  public:
-    void setFunction(std::string);
-    double callFunction(double);
-  private:
-    FunctionParser fp;
+public:
+  void setFunction(std::string);
+  double callFunction(double);
+private:
+  FunctionParser fp;
 };

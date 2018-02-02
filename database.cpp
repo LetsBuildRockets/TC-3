@@ -7,8 +7,8 @@
 
 const char *conninfo = "dbname = DAQDATA";
 static void exit_nicely(PGconn *conn) {
-    PQfinish(conn);
-    exit(1);
+  PQfinish(conn);
+  exit(1);
 }
 
 std::string getSensorTransferFunction(int id) {
@@ -19,17 +19,17 @@ std::string getSensorTransferFunction(int id) {
 
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
-      fprintf(stderr, "Connection to database failed: %s",
-      PQerrorMessage(conn));
-      exit_nicely(conn);
+    fprintf(stderr, "Connection to database failed: %s",
+    PQerrorMessage(conn));
+    exit_nicely(conn);
   }
   char transaction[100];
   sprintf(transaction, "select transfer_function from sensors where id=%d", id);
   res = PQexec(conn, transaction);
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-      fprintf(stderr, "failed: %s", PQerrorMessage(conn));
-      PQclear(res);
-      exit_nicely(conn);
+    fprintf(stderr, "failed: %s", PQerrorMessage(conn));
+    PQclear(res);
+    exit_nicely(conn);
   }
   if(PQntuples(res) <1){
     return "";

@@ -75,24 +75,31 @@ int getTestNumber() {
   return testNumber;
 }
 
-DatabaseWriter::DatabaseWriter() {
+void executeDatabaseWrite(std::string transaction) {
+  PGconn     *conn;
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
     exit_nicely(conn);
   }
-  transaction = "";
-}
-
-void DatabaseWriter::execute() {
-  transaction += ";";
-  //printf("transaction %s\n",transaction.c_str());
   PQexec(conn, transaction.c_str());
+}
+
+DatabaseBuffer::DatabaseBuffer() {
   transaction = "";
 }
 
-void DatabaseWriter::writeSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled) {
+std::string DatabaseBuffer::getTransaction() {
+  transaction += ";";
+  return transaction;
+}
+
+void DatabaseBuffer::clear() {
+  transaction = "";
+}
+
+void DatabaseBuffer::bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled) {
   if(transaction.compare("")==0) {
     transaction = "INSERT INTO testdata VALUES";
   } else  {

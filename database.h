@@ -1,16 +1,15 @@
 #include <libpq-fe.h>
 
-class DatabaseWriter {
+class DatabaseBuffer {
 public:
-  DatabaseWriter();
-  void writeSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled);
-  void execute();
+  DatabaseBuffer();
+  void bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled);
+  std::string getTransaction();
+  void clear();
 private:
-  PGconn *conn;
-  PGresult *res;
   std::string transaction;
 };
+void executeDatabaseWrite(std::string transaction);
 static void exit_nicely(PGconn *conn);
 std::string getSensorTransferFunction(int sensorId);
-void writeSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled);
 int getTestNumber();

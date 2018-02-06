@@ -23,6 +23,7 @@ void my_handler(int s){
   exit(1);
 }
 
+
 int main( void ) {
   int testNumber = getTestNumber();
   TransferFunctions func[MAX_CHAN];
@@ -30,6 +31,7 @@ int main( void ) {
   struct timeval sampTime[MAX_CHAN];
   long sensorUpdateThrottle[MAX_CHAN];
 
+  databaseBufferClear();
 
   for(int i=0; i < MAX_CHAN; i++) {
     std::string transfunc = getSensorTransferFunction(i);
@@ -63,8 +65,6 @@ int main( void ) {
     printf("Register_Card error=%d\n", card);
     exit(1);
   }
-  DatabaseBuffer databaseBuffer;
-
   while(1) {
     gettimeofday(&tv1, NULL);
     for(int i=0 ; i<MAX_CHAN; i++ ){
@@ -78,7 +78,7 @@ int main( void ) {
           printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
         gettimeofday(&sampTime[i], NULL);
         AI_VoltScale(card, range, chan_data[i], &chan_voltage[i]);
-        databaseBuffer.bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
+        bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
         //chan_data[i] = chan_data[i] & 0x0ff;
       } else {
 
@@ -94,10 +94,9 @@ int main( void ) {
     printf("\n\n\n\n\n  press ^C to stop \n");
 
     if(count%100 == 99) {
-      std::string trans = databaseBuffer.getTransaction();
-      std::thread databaseWriterThread(executeDatabaseWrite, trans);
+      //executeDatabaseWrite();
+      std::thread databaseWriterThread(executeDatabaseWrite);
       databaseWriterThread.detach();
-      databaseBuffer.clear();
     }
     gettimeofday(&tv2, NULL);
     totaltime += ((double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +(double) (tv2.tv_sec - tv1.tv_sec))*1000;

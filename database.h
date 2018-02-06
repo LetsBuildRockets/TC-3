@@ -1,16 +1,12 @@
-#include <libpq-fe.h>
+#ifndef DATABASE_H
+#define DATABASE_H
 
-class DatabaseBuffer {
-public:
-  DatabaseBuffer();
-  void bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled);
-  std::string getTransaction();
-  void clear();
-private:
-  std::string transaction;
-};
-void executeDatabaseWrite(std::string transaction);
-static void exit_nicely(PGconn *conn);
-std::string getSensorTransferFunction(int sensorId);
+static void exit_nicely();
+long getSensorUpdateThrottle(int id);
+std::string getSensorTransferFunction(int id);
 int getTestNumber();
-long getSensorUpdateThrottle(int sensorId);
+void executeDatabaseWrite();
+void databaseBufferClear();
+void bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled);
+
+#endif

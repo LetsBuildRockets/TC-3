@@ -5,18 +5,22 @@
 #include <iostream>
 #include <sys/time.h>
 #include <cstdlib>
+#include <cstring>
 #include "database.h"
 
 
 const char *conninfo = "dbname = DAQDATA";
+char *transaction;
+int transactionCount = 0;
+
 static void exit_nicely(PGconn *conn) {
   PQfinish(conn);
   exit(1);
 }
 
 long getSensorUpdateThrottle(int id) {
-  PGconn     *conn;
-  PGresult   *res;
+  PGconn *conn;
+  PGresult *res;
 
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
@@ -24,9 +28,9 @@ long getSensorUpdateThrottle(int id) {
     PQerrorMessage(conn));
     exit_nicely(conn);
   }
-  char transaction[100];
-  sprintf(transaction, "select throttle_us from sensors where id=%d", id);
-  res = PQexec(conn, transaction);
+  char tmptransaction[100];
+  sprintf(tmptransaction, "select throttle_us from sensors where id=%d", id);
+  res = PQexec(conn, tmptransaction);
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
@@ -45,8 +49,8 @@ long getSensorUpdateThrottle(int id) {
 }
 
 std::string getSensorTransferFunction(int id) {
-  PGconn     *conn;
-  PGresult   *res;
+  PGconn *conn;
+  PGresult *res;
 
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
@@ -54,15 +58,15 @@ std::string getSensorTransferFunction(int id) {
     PQerrorMessage(conn));
     exit_nicely(conn);
   }
-  char transaction[100];
-  sprintf(transaction, "select transfer_function from sensors where id=%d", id);
-  res = PQexec(conn, transaction);
+  char tmptransaction[100];
+  sprintf(tmptransaction, "select transfer_function from sensors where id=%d", id);
+  res = PQexec(conn, tmptransaction);
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
     exit_nicely(conn);
   }
-  if(PQntuples(res) <1){
+  if(PQntuples(res) < 1){
     return "";
   }
 
@@ -76,8 +80,8 @@ std::string getSensorTransferFunction(int id) {
 }
 
 int getTestNumber() {
-  PGconn     *conn;
-  PGresult   *res;
+  PGconn *conn;
+  PGresult *res;
 
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
@@ -85,9 +89,9 @@ int getTestNumber() {
     PQerrorMessage(conn));
     exit_nicely(conn);
   }
-  char transaction[100];
-  sprintf(transaction, "SELECT MAX(test_num) FROM testdata");
-  res = PQexec(conn, transaction);
+  char tmptransaction[100];
+  sprintf(tmptransaction, "SELECT MAX(test_num) FROM testdata");
+  res = PQexec(conn, tmptransaction);
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
@@ -105,47 +109,61 @@ int getTestNumber() {
   return testNumber;
 }
 
-void executeDatabaseWrite(std::string transaction) {
-  if(transaction.compare(";") == 0) return;
-  printf("transaction: %s, %d\n", transaction.c_str(),transaction.compare(""));
-  PGconn     *conn;
-  PGresult   *res;
+void executeDatabaseWrite() {
+  if(transaction[0] == '\0') return;
+  printf("transaction: %s\n", transaction);
+  char *p = transaction;
+  printf("addr: %p, %p\nvalue: %c, %c\n",  (int)transaction, (int)p, transaction[1], p[1]);
+  databaseBufferClear();
+  printf("addr: %p, %p\nvalue: %c, %c\n",  (int)transaction, (int)p, transaction[1], p[1]);
+
+  printf("transaction: %s\n", p);
+  printf("transaction: %s\n", transaction);
+  PGconn *conn;
+  PGresult *res;
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
     exit_nicely(conn);
   }
-  res = PQexec(conn, transaction.c_str());
+  res = PQexec(conn, p);
   if (PQresultStatus(res) != PGRES_COMMAND_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
     exit_nicely(conn);
   }
   PQfinish(conn);
+  free(p);
+  //exit(0);
 }
 
-DatabaseBuffer::DatabaseBuffer() {
-  transaction = "";
-}
-
-std::string DatabaseBuffer::getTransaction() {
-  transaction += ";";
-  return transaction;
-}
-
-void DatabaseBuffer::clear() {
-  transaction = "";
-}
-
-void DatabaseBuffer::bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled) {
-  if(transaction.compare("")==0) {
-    transaction = "INSERT INTO testdata VALUES";
-  } else  {
-    transaction += ",";
+/*getTransaction(char *transaction) {
+  if (transactionCount == 0) {
+    transaction[0] = '\0';
+  } else {
+    std::strcat(transaction, ";");
   }
+}*/
+
+void databaseBufferClear() {
+  transaction = (char*)malloc(sizeof(char[262144]));
+  transactionCount = 0;
+  transaction[0] = '\0';
+}
+
+void bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled) {
+  if (transactionCount > 3200){
+    executeDatabaseWrite();
+  }
+  if(transactionCount == 0) {
+    std::strcat(transaction, "INSERT INTO testdata VALUES");
+  } else {
+      std::strcat(transaction, ",");
+  }
+  transactionCount++;
   double timestamp = (double) ((*time).tv_usec) / 1000000 +(double) ((*time).tv_sec);
   char tmptransaction[100];
   sprintf(tmptransaction, "(%d,to_timestamp(%f),%d,%d,%f)", testNumber, timestamp, sensorId, raw, scaled);
-  transaction += std::string(tmptransaction);
+  std::strcat(transaction, tmptransaction);
 }

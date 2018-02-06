@@ -13,3 +13,4 @@ void executeDatabaseWrite(std::string transaction);
 static void exit_nicely(PGconn *conn);
 std::string getSensorTransferFunction(int sensorId);
 int getTestNumber();
+long getSensorUpdateThrottle(int sensorId);

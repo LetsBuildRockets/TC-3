@@ -14,6 +14,36 @@ static void exit_nicely(PGconn *conn) {
   exit(1);
 }
 
+long getSensorUpdateThrottle(int id) {
+  PGconn     *conn;
+  PGresult   *res;
+
+  conn = PQconnectdb(conninfo);
+  if (PQstatus(conn) != CONNECTION_OK) {
+    fprintf(stderr, "Connection to database failed: %s",
+    PQerrorMessage(conn));
+    exit_nicely(conn);
+  }
+  char transaction[100];
+  sprintf(transaction, "select throttle_us from sensors where id=%d", id);
+  res = PQexec(conn, transaction);
+  if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+    fprintf(stderr, "failed: %s", PQerrorMessage(conn));
+    PQclear(res);
+    exit_nicely(conn);
+  }
+  if(PQntuples(res) <1){
+    return 0;
+  }
+
+  long throttle = atoll(PQgetvalue(res, 0, 0));
+
+  PQclear(res);
+
+  PQfinish(conn);
+  return throttle;
+}
+
 std::string getSensorTransferFunction(int id) {
   PGconn     *conn;
   PGresult   *res;
@@ -76,7 +106,8 @@ int getTestNumber() {
 }
 
 void executeDatabaseWrite(std::string transaction) {
-  //printf("transaction: %s\n", transaction.c_str());
+  if(transaction.compare(";") == 0) return;
+  printf("transaction: %s, %d\n", transaction.c_str(),transaction.compare(""));
   PGconn     *conn;
   PGresult   *res;
   conn = PQconnectdb(conninfo);

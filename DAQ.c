@@ -26,6 +26,11 @@ void my_handler(int s){
 int main( void ) {
   int testNumber = getTestNumber();
   TransferFunctions func[MAX_CHAN];
+  struct timeval tv1, tv2;
+  struct timeval sampTime[MAX_CHAN];
+  long sensorUpdateThrottle[MAX_CHAN];
+
+
   for(int i=0; i < MAX_CHAN; i++) {
     std::string transfunc = getSensorTransferFunction(i);
     if(transfunc.compare("")!=0) {
@@ -34,8 +39,11 @@ int main( void ) {
       func[i].setFunction("x");
     }
   }
-  struct timeval tv1, tv2;
-  struct timeval sampTime[MAX_CHAN];
+
+  for(int i=0; i < MAX_CHAN; i++) {
+    sensorUpdateThrottle[i] = getSensorUpdateThrottle(i);
+    gettimeofday(&sampTime[i], NULL);
+  }
 
   struct sigaction sigIntHandler;
   sigIntHandler.sa_handler = my_handler;
@@ -60,12 +68,21 @@ int main( void ) {
   while(1) {
     gettimeofday(&tv1, NULL);
     for(int i=0 ; i<MAX_CHAN; i++ ){
-      if( (err = AI_ReadChannel(card, i, range, &chan_data[i]) ) != NoError )
-        printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
-      gettimeofday(&sampTime[i], NULL);
-      AI_VoltScale(card, range, chan_data[i], &chan_voltage[i]);
-      databaseBuffer.bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
-      //chan_data[i] = chan_data[i] & 0x0ff;
+      struct timeval currentTime;
+      gettimeofday(&currentTime, NULL);
+      double timestamp1 = (double) ((currentTime).tv_usec) / 1000000 +(double) ((currentTime).tv_sec);
+      double timestamp2 = (double) ((sampTime[i]).tv_usec) / 1000000 +(double) ((sampTime[i]).tv_sec);
+      if(timestamp1 - timestamp2 > ((double)sensorUpdateThrottle[i])/1000.0/1000.0) {
+        printf("sampled after: %f \n",(timestamp1 - timestamp2));
+        if( (err = AI_ReadChannel(card, i, range, &chan_data[i]) ) != NoError )
+          printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
+        gettimeofday(&sampTime[i], NULL);
+        AI_VoltScale(card, range, chan_data[i], &chan_voltage[i]);
+        databaseBuffer.bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
+        //chan_data[i] = chan_data[i] & 0x0ff;
+      } else {
+
+      }
     }
 
     clrscr();

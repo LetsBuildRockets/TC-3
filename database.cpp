@@ -111,14 +111,10 @@ int getTestNumber() {
 
 void executeDatabaseWrite() {
   if(transaction[0] == '\0') return;
-  printf("transaction: %s\n", transaction);
+  //printf("transaction: %s\n", transaction);
   char *p = transaction;
-  printf("addr: %p, %p\nvalue: %c, %c\n",  (int)transaction, (int)p, transaction[1], p[1]);
   databaseBufferClear();
-  printf("addr: %p, %p\nvalue: %c, %c\n",  (int)transaction, (int)p, transaction[1], p[1]);
 
-  printf("transaction: %s\n", p);
-  printf("transaction: %s\n", transaction);
   PGconn *conn;
   PGresult *res;
   conn = PQconnectdb(conninfo);

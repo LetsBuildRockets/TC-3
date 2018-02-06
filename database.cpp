@@ -76,14 +76,22 @@ int getTestNumber() {
 }
 
 void executeDatabaseWrite(std::string transaction) {
+  //printf("transaction: %s\n", transaction.c_str());
   PGconn     *conn;
+  PGresult   *res;
   conn = PQconnectdb(conninfo);
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
     exit_nicely(conn);
   }
-  PQexec(conn, transaction.c_str());
+  res = PQexec(conn, transaction.c_str());
+  if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+    fprintf(stderr, "failed: %s", PQerrorMessage(conn));
+    PQclear(res);
+    exit_nicely(conn);
+  }
+  PQfinish(conn);
 }
 
 DatabaseBuffer::DatabaseBuffer() {

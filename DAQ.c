@@ -23,14 +23,6 @@ void my_handler(int s){
   exit(1);
 }
 
-void nsleep(long ns) {
-  struct timespec tv;
-  tv.tv_sec = (time_t) 0;
-  tv.tv_nsec = ns;
-  nanosleep(&tv, &tv);
-}
-
-
 int main( void ) {
   int testNumber = getTestNumber();
   TransferFunctions func[MAX_CHAN];
@@ -99,7 +91,6 @@ int main( void ) {
     printf("\n\n\n\n\n  press ^C to stop \n");*/
 
     if(count%10000 == 99) {
-      //executeDatabaseWrite();
       std::thread databaseWriterThread(executeDatabaseWrite);
       databaseWriterThread.detach();
     }
@@ -109,7 +100,7 @@ int main( void ) {
     if(count%100000 == 0)
       printf("cylce time: %10.0f us\ncount: %ld\n",totaltime/count, count);
     struct timespec tv;
-    nsleep(2000);
+    usleep(1);
   };
 
   return 0;

@@ -148,7 +148,7 @@ void databaseBufferClear() {
   transaction[0] = '\0';
 }
 
-void bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled) {
+void bufferSensorData(int testNumber, timeval *time, int sensorId, int raw, double scaled) {
   if (transactionCount > 3200){
     executeDatabaseWrite();
   }

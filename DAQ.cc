@@ -23,7 +23,7 @@ void my_handler(int s){
   exit(1);
 }
 
-int main( void ) {
+int main(void) {
   int testNumber = getTestNumber();
   TransferFunctions func[MAX_CHAN];
   struct timeval tv1, tv2;

@@ -15,10 +15,11 @@
 #include <thread>
 #include <string>
 #include <mutex>
+#include <queue>
 #include "server.hpp"
 
 extern std::mutex stateMutex;
-extern std::string commandBuffer;
+extern std::queue<std::string> commandBuffer;
 class session {
 public:
   session(boost::asio::io_service& io_service) : socket_(io_service) {
@@ -36,7 +37,7 @@ public:
   void handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
     if (!error) {
       stateMutex.lock();
-      commandBuffer.append(data_);
+      commandBuffer.push(data_);
       stateMutex.unlock();
       printf("msg: %s\n", data_);
       socket_.async_read_some(boost::asio::buffer(data_, max_length), boost::bind(&session::handle_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
@@ -72,6 +73,7 @@ public:
       new_session->start();
       new_session = new session(io_service_);
       acceptor_.async_accept(new_session->socket(), boost::bind(&server::handle_accept, this, new_session, boost::asio::placeholders::error));
+      printf("New Connection!\n");
     } else {
       delete new_session;
     }

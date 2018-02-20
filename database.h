@@ -7,6 +7,6 @@ std::string getSensorTransferFunction(int id);
 int getTestNumber();
 void executeDatabaseWrite();
 void databaseBufferClear();
-void bufferSensorData(int testNumber, timeval* time, int sensorId, int raw, double scaled);
+void bufferSensorData(int testNumber, timespec* time, int sensorId, int raw, double scaled);
 
 #endif

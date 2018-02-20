@@ -148,7 +148,7 @@ void databaseBufferClear() {
   transaction[0] = '\0';
 }
 
-void bufferSensorData(int testNumber, timeval *time, int sensorId, int raw, double scaled) {
+void bufferSensorData(int testNumber, timespec *time, int sensorId, int raw, double scaled) {
   if (transactionCount > 3200){
     executeDatabaseWrite();
   }
@@ -158,7 +158,7 @@ void bufferSensorData(int testNumber, timeval *time, int sensorId, int raw, doub
       std::strcat(transaction, ",");
   }
   transactionCount++;
-  double timestamp = (double) ((*time).tv_usec) / 1000000 +(double) ((*time).tv_sec);
+  double timestamp = (double) ((*time).tv_nsec) / 1000000000.0 +(double) ((*time).tv_sec);
   char tmptransaction[100];
   sprintf(tmptransaction, "(%d,to_timestamp(%f),%d,%d,%f)", testNumber, timestamp, sensorId, raw, scaled);
   std::strcat(transaction, tmptransaction);

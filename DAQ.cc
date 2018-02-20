@@ -7,6 +7,7 @@
 #include <sys/time.h>
 #include <string.h>
 #include <thread>
+#include <time.h>
 #include "dask.h"
 #include "conio.h"
 
@@ -15,6 +16,7 @@
 
 #define MAX_CHAN 4
 #define DELAY 1L
+#define BILLION 1000000000L
 I16 card, err;
 
 void my_handler(int s){
@@ -23,12 +25,24 @@ void my_handler(int s){
   exit(1);
 }
 
+static unsigned long long rdtsc(void)
+{
+  unsigned int low, high;
+  asm("cpuid");
+  asm volatile("rdtsc" : "=a" (low), "=d" (high));
+  return low | ((unsigned long long)high) << 32;
+}
+
 int main(void) {
   int testNumber = getTestNumber();
   TransferFunctions func[MAX_CHAN];
-  struct timeval tv1, tv2;
-  struct timeval sampTime[MAX_CHAN];
-  double sensorUpdateThrottle[MAX_CHAN];
+  uint64_t diff;
+  struct timespec tv1, tv2, deadline;
+  struct timespec sampTime[MAX_CHAN];
+  uint64_t sensorUpdateThrottleNS[MAX_CHAN];
+
+  deadline.tv_sec = 0;
+  deadline.tv_nsec = 10;
 
   databaseBufferClear();
 
@@ -42,8 +56,8 @@ int main(void) {
   }
 
   for(int i=0; i < MAX_CHAN; i++) {
-    sensorUpdateThrottle[i] = (double)getSensorUpdateThrottle(i)/1000.0/1000.0;
-    gettimeofday(&sampTime[i], NULL);
+    sensorUpdateThrottleNS[i] = 1000 * getSensorUpdateThrottle(i);
+    clock_gettime(CLOCK_MONOTONIC, &sampTime[i]);
   }
 
   struct sigaction sigIntHandler;
@@ -64,17 +78,16 @@ int main(void) {
     printf("Register_Card error=%d\n", card);
     exit(1);
   }
-  struct timeval currentTime;
+  struct timespec currentTime;
   while(1) {
-    gettimeofday(&tv1, NULL);
+    clock_gettime(CLOCK_MONOTONIC, &tv1);
     for(int i=0 ; i<MAX_CHAN; i++ ){
-      gettimeofday(&currentTime, NULL);
-      double currentTime_seconds = (double) ((currentTime).tv_usec) / 1000000 + (double) ((currentTime).tv_sec);
-      double sampTime_seconds = (double) ((sampTime[i]).tv_usec) / 1000000 +(double) ((sampTime[i]).tv_sec);
-      if(currentTime_seconds - sampTime_seconds > sensorUpdateThrottle[i]) {
+      clock_gettime(CLOCK_MONOTONIC, &currentTime);
+      diff = BILLION * (currentTime.tv_sec - sampTime[i].tv_sec) + currentTime.tv_nsec - sampTime[i].tv_nsec;
+      if(diff > sensorUpdateThrottleNS[i]) {
         if( (err = AI_ReadChannel(card, i, range, &chan_data[i]) ) != NoError )
-          printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
-        gettimeofday(&sampTime[i], NULL);
+        printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
+        clock_gettime(CLOCK_MONOTONIC, &sampTime[i]);
         AI_VoltScale(card, range, chan_data[i], &chan_voltage[i]);
         bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
       } else {
@@ -94,13 +107,16 @@ int main(void) {
       std::thread databaseWriterThread(executeDatabaseWrite);
       databaseWriterThread.detach();
     }
-    gettimeofday(&tv2, NULL);
-    totaltime += ((double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +(double) (tv2.tv_sec - tv1.tv_sec))*1000*1000;
+
+    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &deadline, NULL);
+
+    clock_gettime(CLOCK_MONOTONIC, &tv2);
+    diff = BILLION * (tv2.tv_sec - tv1.tv_sec) + tv2.tv_nsec - tv1.tv_nsec;
+    totaltime += diff;
     count++;
-    if(count%100000 == 0)
-      printf("cylce time: %10.0f us\ncount: %ld\n",totaltime/count, count);
-    struct timespec tv;
-    usleep(1);
+    if(count%100000 == 0) {
+      printf("cylce time: %10.0f ns\ncount: %ld\n",totaltime/count, count);
+    }
   };
 
   return 0;

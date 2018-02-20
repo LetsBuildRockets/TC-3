@@ -99,7 +99,7 @@ int main(void) {
       T = SEQUENCE_START_TIME + ((double) (currentTime.tv_usec - startTime.tv_usec) / 1000000 +(double) (currentTime.tv_sec - startTime.tv_sec));
       runSequence();
     } else if (state == aborttest) {
-      A = (double) (currentTime.tv_usec - aborttest.tv_usec) / 1000000 +(double) (currentTime.tv_sec - aborttest.tv_sec);
+      A = (double) (currentTime.tv_usec - abortTime.tv_usec) / 1000000 +(double) (currentTime.tv_sec - abortTime.tv_sec);
       abortSequcence();
     }
 

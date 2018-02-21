@@ -1,5 +1,5 @@
 //
-// async_tcp_echo_server.cpp
+// async_tcp_echo_server.cc
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2008 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -16,7 +16,7 @@
 #include <string>
 #include <mutex>
 #include <queue>
-#include "server.hpp"
+#include "server.h"
 
 extern std::mutex stateMutex;
 extern std::queue<std::string> commandBuffer;

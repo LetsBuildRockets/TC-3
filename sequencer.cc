@@ -6,7 +6,7 @@
 #include <thread>
 #include <queue>
 
-#include "server.hpp"
+#include "server.h"
 
 #define SEQUENCE_START_TIME -30
 

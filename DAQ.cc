@@ -20,7 +20,8 @@
 #define range AD_U_10_V
 
 extern int testNumber;
-unsigned long sampleCount=0;
+extern long long sampleCount;
+extern long long realSampleCount;
 I16 cardAI;
 TransferFunctions func[MAX_CHAN];
 struct timespec sampTime[MAX_CHAN], deadline;
@@ -51,7 +52,7 @@ void initAI() {
 
   // set sample tick time
   deadline.tv_sec = 0;
-  deadline.tv_nsec = 10;
+  deadline.tv_nsec = 1;
 }
 
 static unsigned long long rdtsc() {
@@ -69,26 +70,29 @@ void tickAI() {
   for(int i = 0 ; i < MAX_CHAN; i++ ) {
     clock_gettime(CLOCK_MONOTONIC, &currentTime);
     uint64_t diff = BILLION * (currentTime.tv_sec - sampTime[i].tv_sec) + currentTime.tv_nsec - sampTime[i].tv_nsec;
-    if(diff > sensorUpdateThrottleNS[i]) {
+    if(diff >= sensorUpdateThrottleNS[i]) {
       I16 err;
-      if((err = AI_ReadChannel(cardAI, i, range, &chan_data[i])) != NoError) {
-        printf(" AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
+      if((err = AI_ReadChannel(cardAI, i, range, &chan_data[i])) == NoError) {
+        realSampleCount++;
         clock_gettime(CLOCK_MONOTONIC, &sampTime[i]);
         AI_VoltScale(cardAI, range, chan_data[i], &chan_voltage[i]);
         bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
+      } else {
+        printf("AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
       }
     } else {
-
+      // not time to nsampleCount
     }
   }
 
-  if(sampleCount%10000 == 9999) {
+  if(realSampleCount%100 == 99) {
+    realSampleCount++;
     std::thread databaseWriterThread(executeDatabaseWrite);
     databaseWriterThread.detach();
   }
 
-  clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &deadline, NULL);
-
+  //clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &deadline, NULL);
+  //usleep(1);
   sampleCount++;
 
 };

@@ -16,8 +16,9 @@
 #define SEQUENCE_START_TIME -30
 
 int testNumber;
-extern unsigned long sampleCount;
-double totaltime = 0;
+long long sampleCount = 0;
+long long realSampleCount = 0;
+
 
 enum State { prerun, run, aborttest };
 State state = prerun;
@@ -77,6 +78,7 @@ void abortSequcence() {
 }
 
 int main(void) {
+
   // catch ^C
   struct sigaction sigIntHandler;
   sigIntHandler.sa_handler = my_handler;
@@ -89,7 +91,7 @@ int main(void) {
 
 
   // start tcp socket server
-  //std::thread serviceWorker(runAsyncServer);
+  std::thread serviceWorker(runAsyncServer);
 
   // init both cards and associated variables
   //initDO();
@@ -99,9 +101,8 @@ int main(void) {
   databaseBufferClear();
 
   printf("setup done\n");
+  struct timespec tv1, tv2;
   while(1) {
-    struct timespec tv1, tv2;
-    clock_gettime(CLOCK_MONOTONIC, &tv1);
 
     /*while(!commandBuffer.empty()) {
       bool valve[100];
@@ -146,21 +147,20 @@ int main(void) {
       break;
     }*/
 
-    tickAI();
     //usleep(1);
-
-
-    clock_gettime(CLOCK_MONOTONIC, &tv2);
-    uint64_t diff = BILLION * (tv2.tv_sec - tv1.tv_sec) + tv2.tv_nsec - tv1.tv_nsec;
-
-    totaltime += diff;
-
-    if(sampleCount%1000 == 0) {
-      printf("cylce time: %10.0f us\nsampleCount: %ld\n",totaltime/sampleCount/1000, sampleCount);
+    if(sampleCount == 0) {
+      clock_gettime(CLOCK_MONOTONIC, &tv1);
     }
-    if(sampleCount > 10000) {
-      exit(0);
+    tickAI();
+    if(sampleCount >= 1000000) {
+      clock_gettime(CLOCK_MONOTONIC, &tv2);
+      double diff = tv2.tv_sec - tv1.tv_sec;
+      diff *= 1000 * 1000;
+      diff += (tv2.tv_nsec - tv1.tv_nsec) / 1000;
+      printf("total time: %10.3f us \ncylce time: %10.3f us average \nsampleCount: %lld\n", diff, diff/(double)sampleCount, sampleCount);
+      sampleCount = 0;
     }
   }
+  serviceWorker.detach();
   return 0;
 }

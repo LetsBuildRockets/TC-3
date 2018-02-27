@@ -109,7 +109,7 @@ int getTestNumber() {
   return testNumber;
 }
 
-void executeDatabaseWrite() {
+void executeDatabaseWrite() { // TODO Paramtraize
   if(transaction[0] == '\0') return;
   //printf("transaction: %s\n", transaction);
   char *p = transaction;

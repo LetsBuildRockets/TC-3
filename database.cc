@@ -150,6 +150,7 @@ void databaseBufferClear() {
 
 void bufferSensorData(int testNumber, timespec *time, int sensorId, int raw, double scaled) {
   if (transactionCount > 3200){
+    printf("Warning! Your buffer is filling up. You have %d transactions pending!!!\n", transactionCount);
     executeDatabaseWrite();
   }
   if(transactionCount == 0) {

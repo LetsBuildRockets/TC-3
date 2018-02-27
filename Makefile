@@ -1,7 +1,5 @@
-ALL: DAQ SEQ
-DAQ: DAQ.cc TransferFunctions.cc TransferFunctions.h database.cc database.h
-	g++ -std=c++0x DAQ.cc TransferFunctions.cc database.cc fparser4.5.2/fparser.cc -o DAQ -lpci_dask -lpq -I/usr/include/postgresql -lrt
-SEQ: sequencer.cc server.cc
-	g++ -std=c++0x sequencer.cc server.cc -o TC3 -lboost_system -lrt
+ALL: TC3
+TC3: sequencer.cc server.cc DAQ.cc DAQ.h DO.cc DO.h TransferFunctions.cc TransferFunctions.h database.cc database.h
+	g++ -std=c++0x -g DAQ.cc DO.cc TransferFunctions.cc database.cc fparser4.5.2/fparser.cc sequencer.cc server.cc -o TC3 -lboost_system -lrt -lpci_dask -lpq -I/usr/include/postgresql
 clean:
-	rm DAQ TC3
+	rm TC3

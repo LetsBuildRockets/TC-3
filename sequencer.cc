@@ -23,14 +23,14 @@ long long realSampleCount = 0;
 int loopCount = 0;
 
 
-enum Throttle { THROTTLE_NONE, THROTTLE_1_US, THROTTLE_10_US, THROTTLE_100_US, THROTTLE_1000_US, THROTTLE_1_S };
+enum Throttle { THROTTLE_NONE, THROTTLE_1_US, THROTTLE_10_US, THROTTLE_100_US, THROTTLE_1_MS, THROTTLE_1_S };
 enum State { prerun, run, aborttest };
 
 State state = prerun;
 Throttle throttle = THROTTLE_1_S;
 
 struct timespec startTime, abortTime;
-signed long long T, A; // time in microseconds
+long long T, A; // time in microseconds
 
 std::mutex stateMutex;
 std::queue<std::string> commandBuffer;
@@ -48,39 +48,44 @@ int cToI(char c) {
 }
 
 void runSequence() {
-  printf("running! T%lld\n", T);
-  if(T < -30) {
+  double Tdouble = T/((double) MILLION);
+  printf("running! T%f\n", Tdouble);
+  if(Tdouble < -30*MILLION) {
 
-  } else if (T < -10) {
+  } else if (Tdouble < -10) {
 
-  } else if (T < -5) {
+  } else if (Tdouble < -5) {
 
-  } else if (T < -1) {
+  } else if (Tdouble < -1) {
 
-  } else if (T < -.5) {
+  } else if (Tdouble < -.5) {
 
-  } else if (T < 0) {
+  } else if (Tdouble < 0) {
 
-  } else if (T < .1) {
+  } else if (Tdouble < .1) {
 
-  } else if (T < 5) {
+  } else if (Tdouble < 1) {
 
-  } else if (T < 6) {
+  } else if (Tdouble < 2) {
 
-  } else if (T < 60) {
+  } else if (Tdouble < 3) {
 
   } else {
+    clock_gettime(CLOCK_MONOTONIC, &abortTime);
     state = aborttest;
   }
 }
 
 void abortSequcence() {
+  printf("ABORTING! A%f\n", A/((double) MILLION));
   if(A < 1) {
 
   } else if (A < 2) {
 
   } else if (A < 3) {
 
+  } else  {
+    state = prerun;
   }
 }
 
@@ -133,7 +138,7 @@ int main(void) {
       usleep(100);
       checkStatesNow = (loopCount % 10 == 0);
       break;
-      case THROTTLE_1000_US:
+      case THROTTLE_1_MS:
       usleep(1000);
       checkStatesNow =  true;
       break;

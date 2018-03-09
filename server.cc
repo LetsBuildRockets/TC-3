@@ -89,6 +89,7 @@ void runAsyncServer() {
     boost::asio::io_service io_service;
 
     server s(io_service, 1337);
+    printf("server starting...\n");
     io_service.run();
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";

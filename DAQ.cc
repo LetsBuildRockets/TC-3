@@ -21,7 +21,7 @@
 
 extern int testNumber;
 extern long long sampleCount;
-extern long long realSampleCount;
+long long realSampleCount = 0;
 
 I16 cardAI;
 TransferFunctions func[MAX_CHAN];
@@ -68,6 +68,7 @@ void tickAI() {
     if(diff >= sensorUpdateThrottleNS[i]) {
       I16 err;
       if((err = AI_ReadChannel(cardAI, i, range, &chan_data[i])) == NoError) {
+        //printf("sampled %lld\n", realSampleCount);
         realSampleCount++;
         clock_gettime(CLOCK_MONOTONIC, &sampTime[i]);
         AI_VoltScale(cardAI, range, chan_data[i], &chan_voltage[i]);
@@ -80,8 +81,8 @@ void tickAI() {
     }
   }
 
-  if(realSampleCount%100 == 99) {
-    realSampleCount++;
+  if(realSampleCount%100 == 0 && realSampleCount > 0) {
+    //printf("writing to database... %lld\n", realSampleCount);
     std::thread databaseWriterThread(executeDatabaseWrite);
     databaseWriterThread.detach();
   }

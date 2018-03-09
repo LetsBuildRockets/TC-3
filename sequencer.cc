@@ -14,20 +14,18 @@
 
 #define BILLION 1000000000L
 #define MILLION 1000000L
-#define SEQUENCE_START_TIME -30 // in seconds
+#define SEQUENCE_START_TIME -20 // in seconds
 
 int testNumber;
 long long sampleCount = 0;
-long long realSampleCount = 0;
-
 int loopCount = 0;
 
 
-enum Throttle { THROTTLE_NONE, THROTTLE_1_US, THROTTLE_10_US, THROTTLE_100_US, THROTTLE_1_MS, THROTTLE_1_S };
+enum Throttle { THROTTLE_NONE, THROTTLE_1_US, THROTTLE_10_US, THROTTLE_100_US, THROTTLE_1_MS, THROTTLE_10_MS, THROTTLE_100_MS, THROTTLE_1_S };
 enum State { prerun, run, aborttest };
 
 State state = prerun;
-Throttle throttle = THROTTLE_1_S;
+Throttle throttle = THROTTLE_100_MS;
 
 struct timespec startTime, abortTime;
 long long T, A; // time in microseconds
@@ -50,25 +48,30 @@ int cToI(char c) {
 void runSequence() {
   double Tdouble = T/((double) MILLION);
   printf("running! T%f\n", Tdouble);
-  if(Tdouble < -30*MILLION) {
+  if(Tdouble < -11) {
 
   } else if (Tdouble < -10) {
-
+    setOutput(0, 1);
+  } else if (Tdouble < -9) {
+    setOutput(1, 1);
+  } else if (Tdouble < -8) {
+    setOutput(2, 1);
+  } else if (Tdouble < -7) {
+    setOutput(3, 1);
+  } else if (Tdouble < -6) {
+    setOutput(0, 0);
   } else if (Tdouble < -5) {
-
-  } else if (Tdouble < -1) {
-
-  } else if (Tdouble < -.5) {
-
+    setOutput(1, 0);
+  } else if (Tdouble < -4) {
+    setOutput(2, 0);
+  } else if (Tdouble < -3) {
+    setOutput(3, 0);
+  } else if (Tdouble < -2) {
+    setOutput(0, 1);
+    setOutput(1, 1);
+    setOutput(2, 1);
+    setOutput(3, 1);
   } else if (Tdouble < 0) {
-
-  } else if (Tdouble < .1) {
-
-  } else if (Tdouble < 1) {
-
-  } else if (Tdouble < 2) {
-
-  } else if (Tdouble < 3) {
 
   } else {
     clock_gettime(CLOCK_MONOTONIC, &abortTime);
@@ -77,12 +80,13 @@ void runSequence() {
 }
 
 void abortSequcence() {
-  printf("ABORTING! A%f\n", A/((double) MILLION));
-  if(A < 1) {
+  double Adouble = A/((double) MILLION);
+  printf("ABORTING! A%f\n", Adouble);
+  if(Adouble < 1) {
+    turnOffAllOutputs();
+  } else if (Adouble < 2) {
 
-  } else if (A < 2) {
-
-  } else if (A < 3) {
+  } else if (Adouble < 3) {
 
   } else  {
     state = prerun;
@@ -105,7 +109,7 @@ int main(void) {
   std::thread serviceWorker(runAsyncServer);
 
   // init both cards and associated variables
-  //initDO();
+  initDO();
   initAI();
 
   // reserve memory for buffer to get ready for sampling
@@ -115,7 +119,7 @@ int main(void) {
   struct timespec tv1, tv2;
 
   while(1) {
-    printf("tick%d\n", loopCount);
+    //printf("tick%d\n", loopCount);
     if(sampleCount == 0) {
       clock_gettime(CLOCK_MONOTONIC, &tv1);
     }
@@ -142,6 +146,14 @@ int main(void) {
       usleep(1000);
       checkStatesNow =  true;
       break;
+      case THROTTLE_10_MS:
+      usleep(10000);
+      checkStatesNow =  true;
+      break;
+      case THROTTLE_100_MS:
+      usleep(100000);
+      checkStatesNow =  true;
+      break;
       // THROTTLE_1_S is for testing only!
       case THROTTLE_1_S:
       usleep(MILLION);
@@ -154,7 +166,7 @@ int main(void) {
 
     // Check the commands from the TCP socket buffer
     if(checkStatesNow) {
-      printf("checkStatesNow\n");
+      //printf("checkStatesNow\n");
       while(!commandBuffer.empty()) {
         bool valve[100];
         char *s = (char *)commandBuffer.front().c_str();
@@ -183,24 +195,24 @@ int main(void) {
 
         commandBuffer.pop();
       }
+    }
 
-      // Check time and update countdown
-      struct timespec currentTime;
-      clock_gettime(CLOCK_MONOTONIC, &currentTime);
-      switch (state) {
-        case run:
-        T = SEQUENCE_START_TIME * MILLION + ((currentTime.tv_nsec - startTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - startTime.tv_sec));
-        runSequence();
-        break;
+    // Check time and update countdown
+    struct timespec currentTime;
+    clock_gettime(CLOCK_MONOTONIC, &currentTime);
+    switch (state) {
+      case run:
+      T = SEQUENCE_START_TIME * MILLION + ((currentTime.tv_nsec - startTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - startTime.tv_sec));
+      runSequence();
+      break;
 
-        case aborttest:
-        A = (currentTime.tv_nsec - abortTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - abortTime.tv_sec);
-        abortSequcence();
-        break;
+      case aborttest:
+      A = (currentTime.tv_nsec - abortTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - abortTime.tv_sec);
+      abortSequcence();
+      break;
 
-        case prerun:
-        break;
-      }
+      case prerun:
+      break;
     }
 
     // Sample sensors

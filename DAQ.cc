@@ -22,13 +22,14 @@
 extern int testNumber;
 extern long long sampleCount;
 extern long long realSampleCount;
+
 I16 cardAI;
 TransferFunctions func[MAX_CHAN];
 struct timespec sampTime[MAX_CHAN], deadline;
 uint64_t sensorUpdateThrottleNS[MAX_CHAN];
 
 void releaseAI() {
-  Release_Card( cardAI );
+  Release_Card(cardAI);
 }
 
 void initAI() {
@@ -55,12 +56,6 @@ void initAI() {
   deadline.tv_nsec = 1;
 }
 
-static unsigned long long rdtsc() {
-  unsigned int low, high;
-  asm("cpuid");
-  asm volatile("rdtsc" : "=a" (low), "=d" (high));
-  return low | ((unsigned long long)high) << 32;
-}
 
 void tickAI() {
   struct timespec currentTime;
@@ -81,7 +76,7 @@ void tickAI() {
         printf("AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
       }
     } else {
-      // not time to nsampleCount
+      // not time to sample
     }
   }
 
@@ -91,8 +86,5 @@ void tickAI() {
     databaseWriterThread.detach();
   }
 
-  //clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &deadline, NULL);
-  //usleep(1);
   sampleCount++;
-
 };

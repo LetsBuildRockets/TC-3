@@ -1,7 +1,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-static void exit_nicely();
+void exitDatabase();
 long getSensorUpdateThrottle(int id);
 std::string getSensorTransferFunction(int id);
 int getTestNumber();

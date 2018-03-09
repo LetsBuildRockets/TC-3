@@ -13,18 +13,24 @@
 
 
 #define BILLION 1000000000L
-#define SEQUENCE_START_TIME -30
+#define MILLION 1000000L
+#define SEQUENCE_START_TIME -30 // in seconds
 
 int testNumber;
 long long sampleCount = 0;
 long long realSampleCount = 0;
 
+int loopCount = 0;
 
+
+enum Throttle { THROTTLE_NONE, THROTTLE_1_US, THROTTLE_10_US, THROTTLE_100_US, THROTTLE_1000_US, THROTTLE_1_S };
 enum State { prerun, run, aborttest };
-State state = prerun;
 
-struct timeval startTime, abortTime;
-double T, A;
+State state = prerun;
+Throttle throttle = THROTTLE_1_S;
+
+struct timespec startTime, abortTime;
+signed long long T, A; // time in microseconds
 
 std::mutex stateMutex;
 std::queue<std::string> commandBuffer;
@@ -33,6 +39,7 @@ std::queue<std::string> commandBuffer;
 void my_handler(int s){
   printf("Caught signal %d\nexiting...\n",s);
   releaseAI();
+  releaseDO();
   exit(1);
 }
 
@@ -41,7 +48,7 @@ int cToI(char c) {
 }
 
 void runSequence() {
-  printf("running! T%f\n", T);
+  printf("running! T%lld\n", T);
   if(T < -30) {
 
   } else if (T < -10) {
@@ -89,7 +96,6 @@ int main(void) {
   // set global testNumber
   testNumber = getTestNumber();
 
-
   // start tcp socket server
   std::thread serviceWorker(runAsyncServer);
 
@@ -102,56 +108,100 @@ int main(void) {
 
   printf("setup done\n");
   struct timespec tv1, tv2;
+
   while(1) {
-
-    /*while(!commandBuffer.empty()) {
-      bool valve[100];
-      char *s = (char *)commandBuffer.front().c_str();
-      int length = strchr(s, '\n') - s  - 1;
-      switch (s[0]) {
-        case 's':
-        if(length != 4) goto INVALID;
-        valve[cToI(s[1])*10 + cToI(s[2])] = cToI(s[3]);
-        break;
-        case 'q':
-        if(length != 2) goto INVALID;
-        if(cToI(s[1]) == 1) {
-          printf("start\n");
-          state = run;
-          gettimeofday(&startTime, NULL);
-        } else if(cToI(s[1]) == 0) {
-          printf("end\n");
-          state = aborttest;
-          gettimeofday(&abortTime, NULL);
-        }
-        break;
-        INVALID:
-        default:
-        printf("nope!\n");
-      }
-
-      commandBuffer.pop();
-    }
-
-    struct timeval currentTime;
-    gettimeofday(&currentTime, NULL);
-    switch (state) {
-      case run:
-      T = SEQUENCE_START_TIME + ((double) (currentTime.tv_usec - startTime.tv_usec) / 1000000 +(double) (currentTime.tv_sec - startTime.tv_sec));
-      runSequence();
-      break;
-
-      case aborttest:
-      A = (double) (currentTime.tv_usec - abortTime.tv_usec) / 1000000 +(double) (currentTime.tv_sec - abortTime.tv_sec);
-      abortSequcence();
-      break;
-    }*/
-
-    //usleep(1);
+    printf("tick%d\n", loopCount);
     if(sampleCount == 0) {
       clock_gettime(CLOCK_MONOTONIC, &tv1);
     }
+
+    // Program runs too fast, lets slow it down a little.
+    bool checkStatesNow;
+    switch(throttle) {
+      case THROTTLE_NONE:
+      checkStatesNow = (loopCount % 10000 == 0);
+      break;
+      case THROTTLE_1_US:
+      usleep(1);
+      checkStatesNow = (loopCount % 1000 == 0);
+      break;
+      case THROTTLE_10_US:
+      usleep(10);
+      checkStatesNow = (loopCount % 100 == 0);
+      break;
+      case THROTTLE_100_US:
+      usleep(100);
+      checkStatesNow = (loopCount % 10 == 0);
+      break;
+      case THROTTLE_1000_US:
+      usleep(1000);
+      checkStatesNow =  true;
+      break;
+      // THROTTLE_1_S is for testing only!
+      case THROTTLE_1_S:
+      usleep(MILLION);
+      checkStatesNow = (loopCount % 5 == 0);
+      break;
+      default:
+      printf("INVALID THROTTLE SELECTION");
+      exit(1);
+    }
+
+    // Check the commands from the TCP socket buffer
+    if(checkStatesNow) {
+      printf("checkStatesNow\n");
+      while(!commandBuffer.empty()) {
+        bool valve[100];
+        char *s = (char *)commandBuffer.front().c_str();
+        int length = strchr(s, '\n') - s  - 1;
+        switch (s[0]) {
+          case 's':
+          if(length != 4) goto INVALID;
+          valve[cToI(s[1])*10 + cToI(s[2])] = cToI(s[3]);
+          break;
+          case 'q':
+          if(length != 2) goto INVALID;
+          if(cToI(s[1]) == 1) {
+            printf("start\n");
+            state = run;
+            clock_gettime(CLOCK_MONOTONIC, &startTime);
+          } else if(cToI(s[1]) == 0) {
+            printf("end\n");
+            state = aborttest;
+            clock_gettime(CLOCK_MONOTONIC, &abortTime);
+          }
+          break;
+          INVALID:
+          default:
+          printf("Command not recognized!\n");
+        }
+
+        commandBuffer.pop();
+      }
+
+      // Check time and update countdown
+      struct timespec currentTime;
+      clock_gettime(CLOCK_MONOTONIC, &currentTime);
+      switch (state) {
+        case run:
+        T = SEQUENCE_START_TIME * MILLION + ((currentTime.tv_nsec - startTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - startTime.tv_sec));
+        runSequence();
+        break;
+
+        case aborttest:
+        A = (currentTime.tv_nsec - abortTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - abortTime.tv_sec);
+        abortSequcence();
+        break;
+
+        case prerun:
+        break;
+      }
+    }
+
+    // Sample sensors
     tickAI();
+
+    // Get average sample rate
     if(sampleCount >= 1000000) {
       clock_gettime(CLOCK_MONOTONIC, &tv2);
       double diff = tv2.tv_sec - tv1.tv_sec;
@@ -160,7 +210,12 @@ int main(void) {
       printf("total time: %10.3f us \ncylce time: %10.3f us average \nsampleCount: %lld\n", diff, diff/(double)sampleCount, sampleCount);
       sampleCount = 0;
     }
+
+    loopCount++;
+    if(loopCount > 10000) loopCount = 0;
   }
+
+  // dont forget to let the TCP socket die...
   serviceWorker.detach();
   return 0;
 }

@@ -13,7 +13,7 @@ const char *conninfo = "dbname = DAQDATA";
 char *transaction;
 int transactionCount = 0;
 
-static void exit_nicely(PGconn *conn) {
+void exitDatabase(PGconn *conn) {
   PQfinish(conn);
   exit(1);
 }
@@ -26,7 +26,7 @@ long getSensorUpdateThrottle(int id) {
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   char tmptransaction[100];
   sprintf(tmptransaction, "select throttle_us from sensors where id=%d", id);
@@ -34,7 +34,7 @@ long getSensorUpdateThrottle(int id) {
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   if(PQntuples(res) <1){
     return 0;
@@ -56,7 +56,7 @@ std::string getSensorTransferFunction(int id) {
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   char tmptransaction[100];
   sprintf(tmptransaction, "select transfer_function from sensors where id=%d", id);
@@ -64,7 +64,7 @@ std::string getSensorTransferFunction(int id) {
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   if(PQntuples(res) < 1){
     return "";
@@ -87,7 +87,7 @@ int getTestNumber() {
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   char tmptransaction[100];
   sprintf(tmptransaction, "SELECT MAX(test_num) FROM testdata");
@@ -95,7 +95,7 @@ int getTestNumber() {
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   if(PQntuples(res) < 1){
     return 0;
@@ -121,13 +121,13 @@ void executeDatabaseWrite() { // TODO Paramtraize
   if (PQstatus(conn) != CONNECTION_OK) {
     fprintf(stderr, "Connection to database failed: %s",
     PQerrorMessage(conn));
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   res = PQexec(conn, p);
   if (PQresultStatus(res) != PGRES_COMMAND_OK) {
     fprintf(stderr, "failed: %s", PQerrorMessage(conn));
     PQclear(res);
-    exit_nicely(conn);
+    exitDatabase(conn);
   }
   PQfinish(conn);
   free(p);

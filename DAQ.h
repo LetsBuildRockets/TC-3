@@ -3,7 +3,6 @@
 
 void releaseAI();
 void initAI();
-static unsigned long long rdtsc();
 void tickAI();
 
 #endif

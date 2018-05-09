@@ -30,8 +30,11 @@ Throttle throttle = THROTTLE_100_MS;
 struct timespec startTime, abortTime;
 long long T, A; // time in microseconds
 
-std::mutex stateMutex;
-std::queue<std::string> commandBuffer;
+extern std::mutex stateMutex;
+extern std::queue<std::string> commandBuffer;
+
+extern std::mutex tcpSendMutex;
+extern std::queue<std::string> tcpSendBuffer;
 
 
 void my_handler(int s){
@@ -48,6 +51,16 @@ int cToI(char c) {
 void runSequence() {
   double Tdouble = T/((double) MILLION);
   printf("running! T%f\n", Tdouble);
+  char buffer [32];
+  if(Tdouble > 0) {
+    sprintf(buffer,"TT+%f\r\n", Tdouble);
+  } else {
+    sprintf(buffer,"TT%f\r\n", Tdouble);
+  }
+  std::string s(buffer);
+  tcpSendMutex.lock();
+  tcpSendBuffer.push(s);
+  tcpSendMutex.unlock();
   if(Tdouble < -11) {
 
   } else if (Tdouble < -10) {
@@ -82,6 +95,12 @@ void runSequence() {
 void abortSequcence() {
   double Adouble = A/((double) MILLION);
   printf("ABORTING! A%f\n", Adouble);
+  char buffer [32];
+  sprintf(buffer,"TA+%f\r\n", Adouble);
+  std::string s(buffer);
+  tcpSendMutex.lock();
+  tcpSendBuffer.push(s);
+  tcpSendMutex.unlock();
   if(Adouble < 1) {
     turnOffAllOutputs();
   } else if (Adouble < 2) {
@@ -170,19 +189,22 @@ int main(void) {
       while(!commandBuffer.empty()) {
         bool valve[100];
         char *s = (char *)commandBuffer.front().c_str();
-        int length = strchr(s, '\n') - s  - 1;
+        printf("command: %s\n", s);
+        int length = strchr(s, '\n') - s;
+        if(length <= 0) goto INVALID;
         switch (s[0]) {
           case 's':
-          if(length != 4) goto INVALID;
+          if(length < 4) goto INVALID;
           valve[cToI(s[1])*10 + cToI(s[2])] = cToI(s[3]);
           break;
           case 'q':
-          if(length != 2) goto INVALID;
-          if(cToI(s[1]) == 1) {
+          printf("command starts with q... l: %d\n",length);
+          if(length < 2) goto INVALID;
+          if(s[1] == '1') {
             printf("start\n");
             state = run;
             clock_gettime(CLOCK_MONOTONIC, &startTime);
-          } else if(cToI(s[1]) == 0) {
+          } else if(s[1] == '0') {
             printf("end\n");
             state = aborttest;
             clock_gettime(CLOCK_MONOTONIC, &abortTime);

@@ -18,8 +18,12 @@
 #include <queue>
 #include "server.h"
 
-extern std::mutex stateMutex;
-extern std::queue<std::string> commandBuffer;
+std::mutex stateMutex;
+std::queue<std::string> commandBuffer;
+
+std::mutex tcpSendMutex;
+std::queue<std::string> tcpSendBuffer;
+
 class session {
 public:
   session(boost::asio::io_service& io_service) : socket_(io_service) {
@@ -55,8 +59,8 @@ public:
     }
   }
 
-private:
   boost::asio::ip::tcp::socket socket_;
+private:
   enum { max_length = 1024 };
   char data_[max_length];
 };
@@ -64,8 +68,8 @@ private:
 class server {
 public:
   server(boost::asio::io_service& io_service, short port) : io_service_(io_service), acceptor_(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) {
-    session* new_session = new session(io_service_);
-    acceptor_.async_accept(new_session->socket(), boost::bind(&server::handle_accept, this, new_session, boost::asio::placeholders::error));
+    new_session__  = new session(io_service_);
+    acceptor_.async_accept(new_session__->socket(), boost::bind(&server::handle_accept, this, new_session__, boost::asio::placeholders::error));
   }
 
   void handle_accept(session* new_session, const boost::system::error_code& error) {
@@ -74,23 +78,41 @@ public:
       new_session = new session(io_service_);
       acceptor_.async_accept(new_session->socket(), boost::bind(&server::handle_accept, this, new_session, boost::asio::placeholders::error));
       printf("New Connection!\n");
+      //sockets.push_back(new_session->socket());
     } else {
       delete new_session;
     }
+  }
+  void send(std::string msg) {
+    //for(std::vector<int>::size_type i = 0; i < sockets.size(); i++) {
+      boost::asio::write(new_session__->socket(), boost::asio::buffer(msg));
+    //}
   }
 
 private:
   boost::asio::io_service& io_service_;
   boost::asio::ip::tcp::acceptor acceptor_;
+  session* new_session__;
 };
 
 void runAsyncServer() {
   try {
-    boost::asio::io_service io_service;
-
-    server s(io_service, 1337);
     printf("server starting...\n");
-    io_service.run();
+    boost::asio::io_service io_service;
+    server s(io_service, 1337);
+    while(true) {
+      tcpSendMutex.lock();
+      if(!tcpSendBuffer.empty())
+      {
+        std::string msg = (char *)tcpSendBuffer.front().c_str();
+        printf("data: %s", msg.c_str());
+        tcpSendBuffer.pop();
+        s.send(msg);
+      }
+      tcpSendMutex.unlock();
+      io_service.poll();
+      usleep(10*1000);
+    }
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
   }

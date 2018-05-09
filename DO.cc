@@ -1,3 +1,6 @@
+#include <mutex>
+#include <queue>
+#include <string>
 #include <iostream>
 
 #include "dask.h"
@@ -5,6 +8,9 @@
 
 #include "DO.h"
 
+
+extern std::mutex tcpSendMutex;
+extern std::queue<std::string> tcpSendBuffer;
 
 I16 cardDO;
 U32 test_out_value = 1;
@@ -25,6 +31,14 @@ void releaseDO() {
 
 void turnOffAllOutputs() {
   DO_WritePort(cardDO, 0, (U32)0);
+  for(int i = 0; i < 32; i++){
+    char buffer [4];
+    sprintf(buffer,"S%02d%d\r\n", i, 0);
+    std::string s(buffer);
+    tcpSendMutex.lock();
+    tcpSendBuffer.push(s);
+    tcpSendMutex.unlock();
+  }
   printf("turned all the relays off...\n");
 }
 
@@ -49,11 +63,19 @@ bool setOutput(int channel, bool value) {
     return false;
   }
 
+  if(readOutput(channel) == value) return true;
+
   if(value) {
     outputs |= ((U32) 1UL) << channel;
   } else {
     outputs &= ~(((U32) 1UL) << channel);
   }
   DO_WritePort(cardDO, 0, outputs);
-  return value;
+  char buffer [4];
+  sprintf(buffer,"S%02d%d\r\n", channel, value);
+  std::string s(buffer);
+  tcpSendMutex.lock();
+  tcpSendBuffer.push(s);
+  tcpSendMutex.unlock();
+  return true;
 }

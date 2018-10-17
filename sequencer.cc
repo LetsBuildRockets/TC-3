@@ -187,7 +187,6 @@ int main(void) {
     if(checkStatesNow) {
       //printf("checkStatesNow\n");
       while(!commandBuffer.empty()) {
-        bool valve[100];
         char *s = (char *)commandBuffer.front().c_str();
         printf("command: %s\n", s);
         int length = strchr(s, '\n') - s;
@@ -195,7 +194,7 @@ int main(void) {
         switch (s[0]) {
           case 's':
           if(length < 4) goto INVALID;
-          valve[cToI(s[1])*10 + cToI(s[2])] = cToI(s[3]);
+          setOutput(cToI(s[1])*10 + cToI(s[2]), cToI(s[3]));
           break;
           case 'q':
           printf("command starts with q... l: %d\n",length);

@@ -15,7 +15,7 @@
 #include "TransferFunctions.h"
 #include "database.h"
 
-#define MAX_CHAN 4
+#define MAX_CHAN 21
 #define BILLION 1000000000L
 #define range AD_U_10_V
 

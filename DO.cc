@@ -58,8 +58,7 @@ bool setOutput(int channel, bool value) {
     return false;
   }
 
-  //if(readOutput(channel) == value) return true;
-
+  if(readOutput(channel) == value) return true;
   if(value) {
     outputs |= ((U32) 1UL) << channel;
   } else {

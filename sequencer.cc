@@ -16,14 +16,14 @@
 #define MILLION 1000000L
 #define SEQUENCE_START_TIME -20 // in seconds
 
-#define TC3-CV-004 0
-#define TC3-CV-003 1
-#define TC3-CV-005 2
-#define TC3-CV-002 3
-#define TC3-CV-001 4
-#define TC3-CV-006 5
-#define TC3-Igniter 6
-#define TC3-CV-000 8
+#define TC3_CV_004 0
+#define TC3_CV_003 1
+#define TC3_CV_005 2
+#define TC3_CV_002 3
+#define TC3_CV_001 4
+#define TC3_CV_006 5
+#define TC3_Igniter 6
+#define TC3_CV_000 8
 
 int testNumber;
 long long sampleCount = 0;
@@ -38,6 +38,7 @@ Throttle throttle = THROTTLE_10_MS;
 
 struct timespec startTime, abortTime;
 long long T, A; // time in microseconds
+long long lastT = -99999999999999999LL, lastA = 99999999999999999LL;
 
 extern std::mutex stateMutex;
 extern std::queue<std::string> commandBuffer;
@@ -59,29 +60,32 @@ int cToI(char c) {
 
 void runSequence() {
   double Tdouble = T/((double) MILLION);
-  printf("running! T%f\n", Tdouble);
-  char buffer [32];
-  if(Tdouble > 0) {
-    sprintf(buffer,"TT+%f\r\n", Tdouble);
-  } else {
-    sprintf(buffer,"TT%f\r\n", Tdouble);
+  if(Tdouble - lastT/((double) MILLION) > .2){
+    printf("running! T%f\n", Tdouble);
+    char buffer [32];
+    if(Tdouble > 0) {
+      sprintf(buffer,"TT+%f\r\n", Tdouble);
+    } else {
+      sprintf(buffer,"TT%f\r\n", Tdouble);
+    }
+    std::string s(buffer);
+    tcpSendMutex.lock();
+    tcpSendBuffer.push(s);
+    tcpSendMutex.unlock();
+    lastT= T;
   }
-  std::string s(buffer);
-  tcpSendMutex.lock();
-  tcpSendBuffer.push(s);
-  tcpSendMutex.unlock();
   
   if(Tdouble >= 10){
     clock_gettime(CLOCK_MONOTONIC, &abortTime);
     state = aborttest;
   } else if(Tdouble >= 5) {
-    setOutput(TC3-CV-003, 0);
-    setOutput(TC3-CV-004, 0);
-  } else if (Tdouble >= 0) {
-    setOutput(TC3-CV-003, 1);
-    setOutput(TC3-CV-004, 1);
+    setOutput(TC3_CV_003, 0);
+    setOutput(TC3_CV_004, 0);
+  } else if (Tdouble >= 0) {  
+    setOutput(TC3_CV_003, 1);
+    setOutput(TC3_CV_004, 1);
   } else if (Tdouble >= -10) {
-    setOutput(TC3-CV-000, 1);
+    setOutput(TC3_CV_000, 1);
   } else {
     
   }
@@ -89,14 +93,17 @@ void runSequence() {
 
 void abortSequcence() {
   double Adouble = A/((double) MILLION);
-  printf("ABORTING! A%f\n", Adouble);
-  char buffer [32];
-  sprintf(buffer,"TA+%f\r\n", Adouble);
-  std::string s(buffer);
-  tcpSendMutex.lock();
-  tcpSendBuffer.push(s);
-  tcpSendMutex.unlock();
-  if(Adouble > 5) {
+  if(Adouble - lastA/((double) MILLION) > .2){
+    printf("ABORTING! A%f\n", Adouble);
+    char buffer [32];
+    sprintf(buffer,"TA+%f\r\n", Adouble);
+    std::string s(buffer);
+    tcpSendMutex.lock();
+    tcpSendBuffer.push(s);
+    tcpSendMutex.unlock();
+    lastA=A;
+  }
+    if(Adouble > 5) {
     state = prerun;
   } else if(Adouble > 1) {
       

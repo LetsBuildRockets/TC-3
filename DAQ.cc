@@ -82,7 +82,7 @@ void tickAI() {
   }
 
   if(realSampleCount%4 == 0 && realSampleCount > 0) {
-    printf("writing to database... %lld\n", realSampleCount);
+    //printf("writing to database... %lld\n", realSampleCount);
     std::thread databaseWriterThread(executeDatabaseWrite);
     databaseWriterThread.detach();
   }

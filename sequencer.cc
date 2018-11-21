@@ -16,6 +16,15 @@
 #define MILLION 1000000L
 #define SEQUENCE_START_TIME -20 // in seconds
 
+#define TC3-CV-004 0
+#define TC3-CV-003 1
+#define TC3-CV-005 2
+#define TC3-CV-002 3
+#define TC3-CV-001 4
+#define TC3-CV-006 5
+#define TC3-Igniter 6
+#define TC3-CV-000 8
+
 int testNumber;
 long long sampleCount = 0;
 int loopCount = 0;
@@ -25,7 +34,7 @@ enum Throttle { THROTTLE_NONE, THROTTLE_1_US, THROTTLE_10_US, THROTTLE_100_US, T
 enum State { prerun, run, aborttest };
 
 State state = prerun;
-Throttle throttle = THROTTLE_100_MS;
+Throttle throttle = THROTTLE_10_MS;
 
 struct timespec startTime, abortTime;
 long long T, A; // time in microseconds
@@ -61,34 +70,20 @@ void runSequence() {
   tcpSendMutex.lock();
   tcpSendBuffer.push(s);
   tcpSendMutex.unlock();
-  if(Tdouble < -11) {
-
-  } else if (Tdouble < -10) {
-    setOutput(0, 1);
-  } else if (Tdouble < -9) {
-    setOutput(1, 1);
-  } else if (Tdouble < -8) {
-    setOutput(2, 1);
-  } else if (Tdouble < -7) {
-    setOutput(3, 1);
-  } else if (Tdouble < -6) {
-    setOutput(0, 0);
-  } else if (Tdouble < -5) {
-    setOutput(1, 0);
-  } else if (Tdouble < -4) {
-    setOutput(2, 0);
-  } else if (Tdouble < -3) {
-    setOutput(3, 0);
-  } else if (Tdouble < -2) {
-    setOutput(0, 1);
-    setOutput(1, 1);
-    setOutput(2, 1);
-    setOutput(3, 1);
-  } else if (Tdouble < 0) {
-
-  } else {
+  
+  if(Tdouble >= 10){
     clock_gettime(CLOCK_MONOTONIC, &abortTime);
     state = aborttest;
+  } else if(Tdouble >= 5) {
+    setOutput(TC3-CV-003, 0);
+    setOutput(TC3-CV-004, 0);
+  } else if (Tdouble >= 0) {
+    setOutput(TC3-CV-003, 1);
+    setOutput(TC3-CV-004, 1);
+  } else if (Tdouble >= -10) {
+    setOutput(TC3-CV-000, 1);
+  } else {
+    
   }
 }
 
@@ -101,14 +96,12 @@ void abortSequcence() {
   tcpSendMutex.lock();
   tcpSendBuffer.push(s);
   tcpSendMutex.unlock();
-  if(Adouble < 1) {
-    turnOffAllOutputs();
-  } else if (Adouble < 2) {
-
-  } else if (Adouble < 3) {
-
-  } else  {
+  if(Adouble > 5) {
     state = prerun;
+  } else if(Adouble > 1) {
+      
+  } else {
+     turnOffAllOutputs();
   }
 }
 

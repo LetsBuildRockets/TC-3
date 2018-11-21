@@ -30,23 +30,18 @@ void releaseDO() {
 }
 
 void turnOffAllOutputs() {
-  DO_WritePort(cardDO, 0, (U32)0);
+  if(outputs == 0) return;
+  outputs = 0;
+  tcpSendMutex.lock();
   for(int i = 0; i < 32; i++){
     char buffer [4];
     sprintf(buffer,"S%02d%d\r\n", i, 0);
     std::string s(buffer);
-    tcpSendMutex.lock();
     tcpSendBuffer.push(s);
-    tcpSendMutex.unlock();
   }
+  tcpSendMutex.unlock();
+  DO_WritePort(cardDO, 0, outputs);
   printf("turned all the relays off...\n");
-}
-
-void loopTest() {
-  DO_WritePort(cardDO, 0, test_out_value);
-  test_out_value = (test_out_value*2)%((1<<31)+1);
-  if(!test_out_value)
-  test_out_value = 1;
 }
 
 bool readOutput(int channel) {
@@ -63,7 +58,7 @@ bool setOutput(int channel, bool value) {
     return false;
   }
 
-  if(readOutput(channel) == value) return true;
+  //if(readOutput(channel) == value) return true;
 
   if(value) {
     outputs |= ((U32) 1UL) << channel;

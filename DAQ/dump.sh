@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir data
 TEST_NUM=$1;
 psql -h TC-DAQ -U daq -d DAQDATA -A -F "," -c "
  SELECT to_char(data_timestamp,'SSSS.US') AS TIME, *
@@ -43,4 +44,4 @@ psql -h TC-DAQ -U daq -d DAQDATA -A -F "," -c "
         \"29\" double precision,
         \"30\" double precision,
         \"31\" double precision);
-" -o dat_$TEST_NUM.csv --pset footer
+" -o data/dat_$TEST_NUM.csv --pset footer

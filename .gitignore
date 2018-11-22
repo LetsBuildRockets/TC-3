@@ -1,3 +1,5 @@
 TC3
 *.gch
 *.out
+
+data/

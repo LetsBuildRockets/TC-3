@@ -15,9 +15,6 @@
 #include "TransferFunctions.h"
 #include "database.h"
 
-#define MAX_CHAN 21
-#define BILLION 1000000000L
-#define range AD_U_10_V
 
 extern int testNumber;
 extern long long sampleCount;
@@ -27,6 +24,8 @@ I16 cardAI;
 TransferFunctions func[MAX_CHAN];
 struct timespec sampTime[MAX_CHAN], deadline;
 uint64_t sensorUpdateThrottleNS[MAX_CHAN];
+
+double localSensorVals[MAX_CHAN] = {0};
 
 void releaseAI() {
   Release_Card(cardAI);
@@ -72,7 +71,8 @@ void tickAI() {
         realSampleCount++;
         clock_gettime(CLOCK_MONOTONIC, &sampTime[i]);
         AI_VoltScale(cardAI, range, chan_data[i], &chan_voltage[i]);
-        bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],func[i].callFunction(chan_voltage[i]));
+        localSensorVals[i] = func[i].callFunction(chan_voltage[i]);
+        bufferSensorData(testNumber,&sampTime[i],i,chan_data[i],localSensorVals[i]);
       } else {
         printf("AI_ReadChannel Ch#%d error : error_code: %d \n", i, err );
       }

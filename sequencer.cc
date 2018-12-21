@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <queue>
+#include <string>
 
 #include "server.h"
 #include "DO.h"
@@ -14,7 +15,7 @@
 
 #define BILLION 1000000000L
 #define MILLION 1000000L
-#define SEQUENCE_START_TIME -20 // in seconds
+#define SEQUENCE_START_TIME -60 // in seconds
 
 #define TC3_CV_004 0
 #define TC3_CV_003 1
@@ -38,13 +39,15 @@ Throttle throttle = THROTTLE_10_MS;
 
 struct timespec startTime, abortTime;
 long long T, A; // time in microseconds
-long long lastT = -99999999999999999LL, lastA = 99999999999999999LL;
+long long lastT = -99999999999999999LL, lastA = -99999999999999999LL;
 
 extern std::mutex stateMutex;
 extern std::queue<std::string> commandBuffer;
 
 extern std::mutex tcpSendMutex;
 extern std::queue<std::string> tcpSendBuffer;
+
+extern double localSensorVals[MAX_CHAN];
 
 
 void my_handler(int s){
@@ -58,6 +61,17 @@ int cToI(char c) {
   return c - 48;
 }
 
+void ABORT() {
+  clock_gettime(CLOCK_MONOTONIC, &abortTime);
+  state = aborttest;
+}
+
+void sendMsg(std::string str) {
+  tcpSendMutex.lock();
+  tcpSendBuffer.push(str);
+  tcpSendMutex.unlock();
+}
+
 void runSequence() {
   double Tdouble = T/((double) MILLION);
   if(Tdouble - lastT/((double) MILLION) > .2){
@@ -69,25 +83,55 @@ void runSequence() {
       sprintf(buffer,"TT%f\r\n", Tdouble);
     }
     std::string s(buffer);
-    tcpSendMutex.lock();
-    tcpSendBuffer.push(s);
-    tcpSendMutex.unlock();
+    sendMsg(s);
     lastT= T;
   }
   
   if(Tdouble >= 10){
-    clock_gettime(CLOCK_MONOTONIC, &abortTime);
-    state = aborttest;
+    ABORT();
   } else if(Tdouble >= 5) {
     setOutput(TC3_CV_003, 0);
     setOutput(TC3_CV_004, 0);
   } else if (Tdouble >= 0) {  
     setOutput(TC3_CV_003, 1);
     setOutput(TC3_CV_004, 1);
-  } else if (Tdouble >= -10) {
+    setOutput(TC3_CV_005, 0);
+    setOutput(TC3_Igniter, 0);
+  } else if (Tdouble >= -1) {
+    setOutput(TC3_Igniter, 1);
+  } else if (Tdouble >= -3) {
+    setOutput(TC3_CV_005, 1);
+  } else if (Tdouble >= -20) {
+    if(localSensorVals[5] < 50) {
+      ABORT();
+      char buffer[256];
+      sprintf(buffer,"MABORTING! LOX Tank pressure is below 50 psi, it is %f\r\n", localSensorVals[5]);
+      sendMsg(std::string(buffer));
+    }
+    if(localSensorVals[6] < 50) {
+      ABORT();
+      char buffer[256];
+      sprintf(buffer,"MABORTING! Fuel Tank Pressure is below 50 psi, it is %f\r\n", localSensorVals[6]);
+      sendMsg(std::string(buffer));
+    }
+  } else if (Tdouble >= -50) {
     setOutput(TC3_CV_000, 1);
+  } else if (Tdouble >= -55) {
+    if(localSensorVals[14] < 50) {
+      ABORT();
+      char buffer[256];
+      sprintf(buffer,"MABORTING! Helium is below 50 psi, it is %f\r\n", localSensorVals[14]);
+      sendMsg(std::string(buffer));  
+    }
   } else {
-    
+    setOutput(TC3_CV_000, 0);
+    setOutput(TC3_CV_001, 0);
+    setOutput(TC3_CV_002, 0);
+    setOutput(TC3_CV_003, 0);
+    setOutput(TC3_CV_004, 0);
+    setOutput(TC3_CV_005, 0);
+    setOutput(TC3_CV_006, 0);
+    setOutput(TC3_Igniter, 0);
   }
 }
 
@@ -98,12 +142,10 @@ void abortSequcence() {
     char buffer [32];
     sprintf(buffer,"TA+%f\r\n", Adouble);
     std::string s(buffer);
-    tcpSendMutex.lock();
-    tcpSendBuffer.push(s);
-    tcpSendMutex.unlock();
+    sendMsg(s);
     lastA=A;
   }
-    if(Adouble > 5) {
+  if(Adouble > 5) {
     state = prerun;
   } else if(Adouble > 1) {
       
@@ -221,6 +263,7 @@ int main(void) {
     // Check time and update countdown
     struct timespec currentTime;
     clock_gettime(CLOCK_MONOTONIC, &currentTime);
+    
     switch (state) {
       case run:
       T = SEQUENCE_START_TIME * MILLION + ((currentTime.tv_nsec - startTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - startTime.tv_sec));
@@ -231,7 +274,6 @@ int main(void) {
       A = (currentTime.tv_nsec - abortTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - abortTime.tv_sec);
       abortSequcence();
       break;
-
       case prerun:
       break;
     }

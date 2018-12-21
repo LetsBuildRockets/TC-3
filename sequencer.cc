@@ -1,4 +1,3 @@
-
 #include <sys/time.h>
 #include <iostream>
 #include <boost/asio.hpp>
@@ -17,14 +16,14 @@
 #define MILLION 1000000L
 #define SEQUENCE_START_TIME -60 // in seconds
 
-#define TC3_CV_004 0
-#define TC3_CV_003 1
-#define TC3_CV_005 2
-#define TC3_CV_002 3
-#define TC3_CV_001 4
-#define TC3_CV_006 5
-#define TC3_Igniter 6
-#define TC3_CV_000 8
+#define TC3_CV_004 0 // Main Fuel Valve
+#define TC3_CV_003 1 // Main Lox Valve
+#define TC3_CV_005 2 // Oxygen Pilot
+#define TC3_CV_002 3 // LOX Vent
+#define TC3_CV_001 4 // Fuel Vent
+#define TC3_CV_006 5 // Pneumatic Supply
+#define TC3_Igniter 6 // Igniter
+#define TC3_CV_000 8 // Helium Valve
 
 int testNumber;
 long long sampleCount = 0;
@@ -92,26 +91,51 @@ void runSequence() {
   } else if(Tdouble >= 5) {
     setOutput(TC3_CV_003, 0);
     setOutput(TC3_CV_004, 0);
+  } else if (Tdouble >=2) {
+    if(localSensorVals[4] < 50) {
+      //ABORT();
+      sprintf(buffer,"MABORTING! At T=+2. Did we get good ignition? Chamber Pressure is below 50psi, it is %f\r\n", localSensorVals[4]);
+    }
+  }
+  } else if (Tdouble >= 1) {
+    setOutput(TC3_CV_005, 0);
+    if(localSensorVals[3] < 100) {
+      //ABORT();
+      sprintf(buffer,"MABORTING! At T=+1. Did we get good ignition? Chamber Temp is below 100C, it is %f\r\n", localSensorVals[3]);
+    }
+  } else if (Tdouble >= .75) {
+    if(localSensorVals[17] < 60) {
+      ABORT();
+      sprintf(buffer,"MABORTING! At T=+0.75 Fuel Valve isn't open, it's at %f deg\r\n", localSensorVals[17]);
+    }
+    if(localSensorVals[18] < 60) {
+      ABORT();
+      sprintf(buffer,"MABORTING! At T=+0.75 LOX Valve isn't open, it's at %f deg\r\n", localSensorVals[18]);
+    }
   } else if (Tdouble >= 0) {  
     setOutput(TC3_CV_003, 1);
     setOutput(TC3_CV_004, 1);
-    setOutput(TC3_CV_005, 0);
-    setOutput(TC3_Igniter, 0);
   } else if (Tdouble >= -1) {
-    setOutput(TC3_Igniter, 1);
-  } else if (Tdouble >= -3) {
+    if(localSensorVals[3] < 100) {
+      ABORT();
+      sprintf(buffer,"MABORTING! At T=-1. Did the Ingiter Fire? Chamber Temp is below 100C, it is %f\r\n", localSensorVals[3]);
+    }
+  } else if (Tdouble >= -2) {
     setOutput(TC3_CV_005, 1);
+    setOutput(TC3_Igniter, 0);
+  } else if (Tdouble >= -3) {
+    setOutput(TC3_Igniter, 1);
   } else if (Tdouble >= -20) {
     if(localSensorVals[5] < 50) {
       ABORT();
       char buffer[256];
-      sprintf(buffer,"MABORTING! LOX Tank pressure is below 50 psi, it is %f\r\n", localSensorVals[5]);
+      sprintf(buffer,"MABORTING! At T=-20 LOX Tank pressure is below 50 psi, it is %f\r\n", localSensorVals[5]);
       sendMsg(std::string(buffer));
     }
     if(localSensorVals[6] < 50) {
       ABORT();
       char buffer[256];
-      sprintf(buffer,"MABORTING! Fuel Tank Pressure is below 50 psi, it is %f\r\n", localSensorVals[6]);
+      sprintf(buffer,"MABORTING! At T=-20 Fuel Tank Pressure is below 50 psi, it is %f\r\n", localSensorVals[6]);
       sendMsg(std::string(buffer));
     }
   } else if (Tdouble >= -50) {
@@ -120,7 +144,7 @@ void runSequence() {
     if(localSensorVals[14] < 50) {
       ABORT();
       char buffer[256];
-      sprintf(buffer,"MABORTING! Helium is below 50 psi, it is %f\r\n", localSensorVals[14]);
+      sprintf(buffer,"MABORTING! At T=-55 Helium is below 50 psi, it is %f\r\n", localSensorVals[14]);
       sendMsg(std::string(buffer));  
     }
   } else {
@@ -145,12 +169,14 @@ void abortSequcence() {
     sendMsg(s);
     lastA=A;
   }
-  if(Adouble > 5) {
+  if(Adouble > 15) {
+    turnOffAllOutputs();
     state = prerun;
   } else if(Adouble > 1) {
-      
+    setOutput(TC3_CV_003, 1);
+    setOutput(TC3_CV_004, 1)
   } else {
-     turnOffAllOutputs();
+    turnOffAllOutputs();
   }
 }
 

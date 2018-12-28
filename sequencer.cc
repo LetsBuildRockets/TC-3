@@ -14,7 +14,7 @@
 
 #define BILLION 1000000000L
 #define MILLION 1000000L
-#define SEQUENCE_START_TIME -60 // in seconds
+#define SEQUENCE_START_TIME -30 // in seconds
 
 #define TC3_CV_004 0 // Main Fuel Valve
 #define TC3_CV_003 1 // Main Lox Valve
@@ -91,60 +91,70 @@ void runSequence() {
   } else if(Tdouble >= 5) {
     setOutput(TC3_CV_003, 0);
     setOutput(TC3_CV_004, 0);
-  } else if (Tdouble >=2) {
-    if(localSensorVals[4] < 50) {
-      //ABORT();
-      sprintf(buffer,"MABORTING! At T=+2. Did we get good ignition? Chamber Pressure is below 50psi, it is %f\r\n", localSensorVals[4]);
-    }
-  }
   } else if (Tdouble >= 1) {
     setOutput(TC3_CV_005, 0);
     if(localSensorVals[3] < 100) {
-      //ABORT();
+      ABORT();
+      char buffer[256];
       sprintf(buffer,"MABORTING! At T=+1. Did we get good ignition? Chamber Temp is below 100C, it is %f\r\n", localSensorVals[3]);
+      sendMsg(std::string(buffer));
     }
-  } else if (Tdouble >= .75) {
+  } else if (Tdouble >= .9) {
     if(localSensorVals[17] < 60) {
       ABORT();
-      sprintf(buffer,"MABORTING! At T=+0.75 Fuel Valve isn't open, it's at %f deg\r\n", localSensorVals[17]);
+      char buffer[256];
+      sprintf(buffer,"MABORTING! At T=+0.9 Fuel Valve isn't open, it's at %f deg\r\n", localSensorVals[17]);
+      sendMsg(std::string(buffer));
     }
     if(localSensorVals[18] < 60) {
       ABORT();
-      sprintf(buffer,"MABORTING! At T=+0.75 LOX Valve isn't open, it's at %f deg\r\n", localSensorVals[18]);
+      char buffer[256];
+      sprintf(buffer,"MABORTING! At T=+0.9 LOX Valve isn't open, it's at %f deg\r\n", localSensorVals[18]);
+      sendMsg(std::string(buffer));
     }
   } else if (Tdouble >= 0) {  
     setOutput(TC3_CV_003, 1);
     setOutput(TC3_CV_004, 1);
-  } else if (Tdouble >= -1) {
-    if(localSensorVals[3] < 100) {
-      ABORT();
-      sprintf(buffer,"MABORTING! At T=-1. Did the Ingiter Fire? Chamber Temp is below 100C, it is %f\r\n", localSensorVals[3]);
+  } else if (Tdouble >= -0.25) {
+    setOutput(TC3_CV_003, 1);
+  } else if (Tdouble >= -0.5) {
+    if(localSensorVals[3] < 40) {
+      //ABORT();
+      char buffer[256];
+      sprintf(buffer,"MABORTING! At T=-0.5. Did the Ingiter Fire? Chamber Temp is below 40C, it is %f\r\n", localSensorVals[3]);
+      sendMsg(std::string(buffer));
     }
-  } else if (Tdouble >= -2) {
+  } else if (Tdouble >= -2.5) {
     setOutput(TC3_CV_005, 1);
     setOutput(TC3_Igniter, 0);
   } else if (Tdouble >= -3) {
     setOutput(TC3_Igniter, 1);
-  } else if (Tdouble >= -20) {
-    if(localSensorVals[5] < 50) {
+  } else if (Tdouble >= -4) {
+    if(localSensorVals[5] < -5) {
       ABORT();
       char buffer[256];
-      sprintf(buffer,"MABORTING! At T=-20 LOX Tank pressure is below 50 psi, it is %f\r\n", localSensorVals[5]);
+      sprintf(buffer,"MABORTING! At T=-10 LOX Tank pressure is below 50 psi, it is %f\r\n", localSensorVals[5]);
       sendMsg(std::string(buffer));
     }
     if(localSensorVals[6] < 50) {
       ABORT();
       char buffer[256];
-      sprintf(buffer,"MABORTING! At T=-20 Fuel Tank Pressure is below 50 psi, it is %f\r\n", localSensorVals[6]);
+      sprintf(buffer,"MABORTING! At T=-10 Fuel Tank Pressure is below 50 psi, it is %f\r\n", localSensorVals[6]);
       sendMsg(std::string(buffer));
     }
-  } else if (Tdouble >= -50) {
+  } else if (Tdouble >= -10) {
     setOutput(TC3_CV_000, 1);
-  } else if (Tdouble >= -55) {
+  } else if (Tdouble >= -25) {
     if(localSensorVals[14] < 50) {
       ABORT();
       char buffer[256];
-      sprintf(buffer,"MABORTING! At T=-55 Helium is below 50 psi, it is %f\r\n", localSensorVals[14]);
+      sprintf(buffer,"MABORTING! At T=-25 Helium is below 50 psi, it is %f\r\n", localSensorVals[14]);
+      sendMsg(std::string(buffer));  
+    }
+        if(localSensorVals[13] < 50) {
+      ABORT();
+      char buffer[256];
+      sprintf(buffer,"MABORTING! At T=-25 Air is below 50 psi, it is %f\r\n", localSensorVals[13]);
       sendMsg(std::string(buffer));  
     }
   } else {
@@ -173,9 +183,13 @@ void abortSequcence() {
     turnOffAllOutputs();
     state = prerun;
   } else if(Adouble > 1) {
-    setOutput(TC3_CV_003, 1);
-    setOutput(TC3_CV_004, 1)
+    setOutput(TC3_CV_003, 0);
+    setOutput(TC3_CV_004, 0);
+    setOutput(TC3_CV_001, 1);
+    setOutput(TC3_CV_002, 1);
   } else {
+    setOutput(TC3_CV_003, 0);
+    setOutput(TC3_CV_004, 0);
     turnOffAllOutputs();
   }
 }
@@ -204,6 +218,7 @@ int main(void) {
 
   printf("setup done\n");
   struct timespec tv1, tv2;
+  
 
   while(1) {
     //printf("tick%d\n", loopCount);
@@ -300,6 +315,7 @@ int main(void) {
       A = (currentTime.tv_nsec - abortTime.tv_nsec) / 1000 + MILLION * (currentTime.tv_sec - abortTime.tv_sec);
       abortSequcence();
       break;
+      
       case prerun:
       break;
     }

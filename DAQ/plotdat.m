@@ -22,14 +22,14 @@ nameArry=["Engine Surface Thermocouple 1"...
 
 hold off
 clf('reset')
-[data text]=importdata("data/dat_115.csv");
+[data text]=importdata("data/dat_153.csv");
 x= str2double(data.textdata(:,1));
 x=x-x(2);
 len = 1;
 b = ones(len,1)/len;
-m = [6,16,5,15,11,12,17,18];
+m = [17 18 0 03];
 legNames = [];
-rangeX = [70, 80];
+rangeX = [70 75];
 fprintf("range: %.2f sec\n",rangeX(2)-rangeX(1));
 for n = m
     col1 = data.data(:, n+1);
